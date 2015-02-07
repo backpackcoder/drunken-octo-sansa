@@ -1,6 +1,6 @@
 <!doctype html>
 <html class="no-js">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>drunken-octo-sansa</title>
     <meta name="description" content="">
@@ -10,58 +10,84 @@
 
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+    <!-- todo: figure out why we need jasmine.css on this page and try to remove -->
     <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-  </head>
-  <body>
-    <div class="container-fluid">
-        <div id="divBrowser" class="alert text-center">
-            &nbsp;
+</head>
+<body>
+<div class="container-fluid">
+    <div id="divBrowser" class="alert text-center">
+        &nbsp;
+    </div>
+    <div class="row-fluid navbar">
+        <div class="brand">drunken-octo-sansa</div>
+        <ul class="nav pull-right">
+            <li>
+                <a href="test.html">Unit Tests</a>
+            </li>
+            <li class="active">
+                <a href="index.html#SinonController">SinonController</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row-fluid">
+        <div class="span6">
+            <form>
+                <fieldset>
+                    <legend>Send AJAX request via $.ajax(url)</legend>
+                    <div class="input-append">
+                        <input type="text" name="url" class="input-xxlarge" placeholder="Enter url and press send">
+                        <button id="btnSend" class="btn" type="button">Send</button>
+                    </div>
+                </fieldset>
+            </form>
+            <div>
+                <dt>
+                    Response:
+                </dt>
+                <dd id="ddResponse">
+                </dd>
+            </div>
         </div>
-        <div class="row-fluid navbar" style="border-bottom: solid 2px #ccc;">
-            <div class="brand">drunken-octo-sansa</div>
-            <ul class="nav nav-pills pull-right">
-                <li class="active">
-                    <a href="#unitTests" data-toggle="tab">Unit Tests</a>
-                </li>
-            </ul>
+        <div class="span6">
+            <form>
+                <fieldset>
+                    <legend>Sinon Controller</legend>
+                    <div id="divSinonController"></div>
+                </fieldset>
+            </form>
         </div>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="unitTests"></div>
-      </div> <!-- .tab-content -->
-    </div> <!-- main div -->
+    </div>
 
-    <!-- build:js(.) scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
-    <script src="bower_components/backbone/backbone.js"></script>
-    <script src="bower_components/bootstrap/docs/assets/js/bootstrap.js"></script>
-    <script src="bower_components/mustache/mustache.js"></script>
-    <!-- endbower -->
-    <script src="bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
-    <script src="bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
-    <!-- endbuild -->
+</div> <!-- main div -->
 
-    <!-- This needs to be separate from vendor.js or sinon doesn't define itstelf correctly -->
-    <!-- build:js({app,.tmp}) scripts/sinon.js -->
-    <script src="scripts/sinon-1.10.3.js"></script>
-    <script src="bower_components/sinon-ie/sinon-ie.js"></script>
-    <!-- endbuild -->
+<!-- build:js(.) scripts/vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="bower_components/backbone/backbone.js"></script>
+<script src="bower_components/bootstrap/docs/assets/js/bootstrap.js"></script>
+<script src="bower_components/mustache/mustache.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- This needs to be separate from vendor.js or sinon doesn't define itstelf correctly -->
+<!-- build:js({app,.tmp}) scripts/sinon.js -->
+<script src="scripts/sinon-1.10.3.js"></script>
+<script src="bower_components/sinon-ie/sinon-ie.js"></script>
+<!-- endbuild -->
 
 
-    <!-- build:js({app,.tmp}) scripts/drunken-octo-sansa.js -->
-    <script src="scripts/templates.js"></script>
-    <script src="scripts/views/sinonController.js"></script>
-    <!-- endbuild -->
+<!-- build:js({app,.tmp}) scripts/drunkenOctoSansa.js -->
+<script src="scripts/templates.js"></script>
+<script src="scripts/views/sinonController.js"></script>
+<!-- endbuild -->
 
-    <!-- build:js({app,.tmp}) scripts/drunken-octo-sansa-tests.js -->
-    <script src="scripts/tests/views/sinonController.js"></script>
-    <!-- endbuild -->
 
-    <!-- build:js({app,.tmp}) scripts/main.js -->
-    <script src="scripts/main.js"></script>
-    <!-- endbuild -->
+<!-- build:js({app,.tmp}) scripts/main.js -->
+<script src="scripts/writeBanner.js"></script>
+<script src="scripts/main.js"></script>
+<!-- endbuild -->
 </body>
 </html>

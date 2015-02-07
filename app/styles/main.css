@@ -1,5 +1,7 @@
-.jasmine_reporter .summary {
+html, body { width: 100%; }
+body { height: 100%; overflow-x: hidden; overflow-y:scroll; }
 
+.jasmine_reporter .summary {
     -webkit-column-width: 300px;
     -moz-column-width: 300px;
     column-width: 300px;
@@ -17,3 +19,10 @@
 .jasmine_reporter {
     display: none;
 }
+
+.navbar {
+    border-bottom: solid 2px #2f2f1c;
+}
+
+
+

@@ -60,12 +60,17 @@ module.exports = function (grunt) {
                 files: ['<%= config.app %>/styles/{,*/}*.css'],
                 tasks: ['newer:copy:styles', 'autoprefixer']
             },
+            bootstrap: {
+                files: ['<%= config.app %>/styles/{,*/}*.less'],
+                tasks: ['bootstrap']
+            },
             livereload: {
                 options: {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
                     '<%= config.app %>/{,*/}*.html',
+                    '<%= config.app %>/styles/*.less',
                     '.tmp/styles/{,*/}*.css',
                     '<%= config.app %>/images/{,*/}*'
                 ]
@@ -194,7 +199,7 @@ module.exports = function (grunt) {
         wiredep: {
             app: {
                 ignorePath: /^\/|\.\.\//,
-                src: ['<%= config.app %>/index.html']
+                src: ['<%= config.app %>/*.html']
             }
         },
 
@@ -242,7 +247,7 @@ module.exports = function (grunt) {
             options: {
                 dest: '<%= config.dist %>'
             },
-            html: '<%= config.app %>/index.html'
+            html: '<%= config.app %>/*.html'
         },
 
         // Performs rewrites based on rev and the useminPrepare configuration
@@ -254,19 +259,20 @@ module.exports = function (grunt) {
             css: ['<%= config.dist %>/styles/{,*/}*.css']
         },
 
-        // The following *-min tasks produce minified files in the dist folder
-        imagemin: {
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= config.app %>/images',
-                        src: '{,*/}*.{gif,jpeg,jpg,png}',
-                        dest: '<%= config.dist %>/images'
-                    }
-                ]
-            }
-        },
+// The following *-min tasks produce minified files in the dist folder
+// TODO: Disabled because of bug on build server
+//        imagemin: {
+//            dist: {
+//                files: [
+//                    {
+//                        expand: true,
+//                        cwd: '<%= config.app %>/images',
+//                        src: '{,*/}*.{gif,jpeg,jpg,png}',
+//                        dest: '<%= config.dist %>/images'
+//                    }
+//                ]
+//            }
+//        },
 
         svgmin: {
             dist: {
@@ -304,33 +310,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-
-        // By default, your `index.html`'s <!-- Usemin block --> will take care
-        // of minification. These next options are pre-configured if you do not
-        // wish to use the Usemin blocks.
-        // cssmin: {
-        //   dist: {
-        //     files: {
-        //       '<%= config.dist %>/styles/main.css': [
-        //         '.tmp/styles/{,*/}*.css',
-        //         '<%= config.app %>/styles/{,*/}*.css'
-        //       ]
-        //     }
-        //   }
-        // },
-        // uglify: {
-        //   dist: {
-        //     files: {
-        //       '<%= config.dist %>/scripts/scripts.js': [
-        //         '<%= config.dist %>/scripts/scripts.js'
-        //       ]
-        //     }
-        //   }
-        // },
-        // concat: {
-        //   dist: {}
-        // },
-
         // Copies remaining files to places other tasks can use
         copy: {
             dist: {
@@ -389,7 +368,7 @@ module.exports = function (grunt) {
             ],
             dist: [
                 'copy:styles',
-                'imagemin',
+                //'imagemin',
                 'svgmin'
             ]
         }
@@ -415,11 +394,13 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'bower',
-            'wiredep',
             'bootstrap',
-            'mustache',
+            'wiredep',
+            'useminPrepare',
             'concurrent:server',
             'autoprefixer',
+            'mustache',
+            'concat',
             'connect:livereload',
             'watch'
         ]);
