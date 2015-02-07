@@ -1,0 +1,19 @@
+.jasmine_reporter .summary {
+
+    -webkit-column-width: 300px;
+    -moz-column-width: 300px;
+    column-width: 300px;
+}
+
+.suite {
+    -webkit-column-break-after: always;
+}
+
+.specSummary2{
+    -webkit-column-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+}
+
+.jasmine_reporter {
+    display: none;
+}
