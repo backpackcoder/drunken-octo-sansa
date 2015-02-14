@@ -118,9 +118,11 @@ var SinonController = Backbone.View.extend({
      */
     sendResponse: function(ev) {
         ev.preventDefault();
-        this.server.requests[this.currentRequest].respond(200,
-            { 'Content-Type': 'application/json' },
-            this.$el.find('textarea').val());
+        var data = this.$el.find('textarea').val();
+        var status = new Number(this.$el.find('select[name="statusCode"]').val());
+        var contentType = { 'Content-Type': 'application/json' };
+        this.server.requests[this.currentRequest].respond(
+            parseInt(status), contentType, data);
         this.render();
     }
 });

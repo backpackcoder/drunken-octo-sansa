@@ -43,7 +43,7 @@
              */
             this.expectRows = function(rows) {
                 expect(this.$ws.find('tbody tr').length).toEqual(rows.length);
-                expect(this.$ws.find('thead').css('display')).toBe('table-header-group');
+                expect(this.$ws.find('thead').css('display') === 'none').toBeFalsy();
                 for(var i=rows.length-1; i > 0; i--) {
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(1)').text()).toEqual(rows[i].method);
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(2)').text()).toEqual(rows[i].url);
@@ -107,6 +107,20 @@
             this.$ws.find('button').click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
+            this.expectNoRequests();
+            this.sc.stop();
+        });
+
+
+        it('can respond with error http status codes', function(){
+            this.sc.start();
+            var callback = sinon.spy();
+            $.ajax($.extend(TestRequest1, { error: callback }));
+            this.sc.render();
+            this.$ws.find('select[name="statusCode"]').val(400);
+            this.$ws.find('button').click();
+            expect(callback.calledOnce).toBeTruthy();
+            expect(callback.calledWithMatch({ status: 400 })).toBeTruthy();
             this.expectNoRequests();
             this.sc.stop();
         });
