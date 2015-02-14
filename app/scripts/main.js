@@ -9,7 +9,9 @@ $(function(){
 
     $('#btnSend').click(function(ev){
         ev.preventDefault();
+        console.log($('select[name="method"]').val());
         $.ajax($('input[name="url"]').val(), {
+            type: $('select[name="method"]').val(),
             success: function(data) {
                 $('<div></div>')
                     .addClass('alert alert-success')
@@ -25,4 +27,3 @@ $(function(){
         });
     });
 });
-

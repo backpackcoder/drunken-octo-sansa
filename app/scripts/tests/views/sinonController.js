@@ -2,191 +2,164 @@
 'use strict';
 
 (function () {
-    var $workspace = $('<div></div>');
-
-
     describe('SinonController', function () {
+        var TestRequest_404 = {
+            url: '/expected-404',
+            async: false,
+            method: 'GET'
+        };
+
+        var TestRequest1 = {
+            url: '/test1',
+            method: 'GET',
+            data : null
+        };
+
+        var TestRequest2 = {
+            url: '/test2',
+            method: 'PUT',
+            data: '{"id": 100}'
+        };
+
         beforeEach(function() {
-            $workspace.empty();
+            this.$ws = $('<div></div>').css('display', 'none');
+            this.sc = new SinonController({
+                el: this.$ws[0]
+            }).render();
             this.clock = sinon.useFakeTimers();
+
+            /**
+             * Expects "No Requests" text in the table
+             */
+            this.expectNoRequests = function() {
+                expect(this.$ws.find('tbody tr').length).toEqual(1);
+                expect(this.$ws.find('tbody tr').text()).toEqual('No requests');
+                expect(this.$ws.find('thead').css('display')).toBe('none');
+            };
+
+            /**
+             * Checks a row of request objects
+             * @param rows
+             */
+            this.expectRows = function(rows) {
+                expect(this.$ws.find('tbody tr').length).toEqual(rows.length);
+                expect(this.$ws.find('thead').css('display')).toBe('table-header-group');
+                for(var i=rows.length-1; i > 0; i--) {
+                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(1)').text()).toEqual(rows[i].method);
+                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(2)').text()).toEqual(rows[i].url);
+                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(3)').text()).toEqual(rows[i].data);
+                }
+            };
         });
 
-        afterEach(function() {
-            $workspace.empty();
+
+        afterEach(function() {            
             this.clock.restore();
+            this.$ws.remove();
+            delete(this.expectRows);
+            delete(this.expectNoRequests);
         });
 
-        it('can be stopped', function(){
-            var sc = new SinonController({
-                el: $workspace[0]
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("No requests");
 
-            $.ajax('/expected-404', {
-                async: false,
-                method: 'GET'
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("No requests");
+        it('can be startered and stopped', function(){
+            this.expectNoRequests();
+            $.ajax(TestRequest_404);
+            this.sc.render();
+            this.expectNoRequests();
 
-            sc.start();
-            $.ajax('/test1', {
-                method: 'GET'
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("/test1");
-            sc.stop();
+            this.sc.start();
+            $.ajax(TestRequest1);
+            this.sc.render();
+            this.expectRows([TestRequest1]);
+            this.sc.stop();
 
-            $.ajax('/expected-404', {
-                method: 'GET'
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("/test1");
+            $.ajax(TestRequest_404);
+            this.sc.render();
+            this.expectRows([TestRequest1]);
         });
+
 
         it('should list requests', function () {
-            var sc = new SinonController({
-                el: $workspace[0]
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("No requests");
+            this.expectNoRequests();
 
-            sc.start();
-            $.ajax('/test1', {
-                method: 'GET'
-            });
-            sc.render();
-            expect($workspace.find('li').length).toEqual(1);
-            expect($workspace.find('li').text()).toEqual("/test1");
+            this.sc.start();
+            $.ajax(TestRequest1);
+            this.sc.render();
+            this.expectRows([TestRequest1]);
 
-            $.ajax('/test2', {
-                method: 'GET'
-            });
 
-            sc.render();
-            expect($workspace.find('li').length).toEqual(2);
-            expect($workspace.find('li:first-child').text()).toEqual("/test1");
-            expect($workspace.find('li:last-child').text()).toEqual("/test2");
-            sc.stop();
+            $.ajax(TestRequest2);
+            this.sc.render();
+            this.expectRows([TestRequest1, TestRequest2]);
+            this.sc.stop();
         });
+
 
         it('should respond to a request', function(){
-            var ws = $('<div class="display: none;"></div>');
-            $workspace.append(ws);
-            var sc = new SinonController({
-                el: ws[0]
-            });
-            sc.render();
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual("No requests");
-            expect(ws.find('button').prop('disabled')).toBeTruthy();
+            this.expectNoRequests();
+            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
 
-            sc.start();
+            this.sc.start();
             var callback = sinon.spy();
-            $.ajax('/test3', {
-                method: 'GET',
-                success: callback
-            });
-            sc.render();
-            ws.find('textarea').val('{ "id": 1 }');
-            ws.find('button').click();
+            $.ajax($.extend(TestRequest1, { success: callback }));
+            this.sc.render();
+            this.$ws.find('textarea').val('{ "id": 1 }');
+            this.$ws.find('button').click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
-            expect(ws.find('li').length).toBe(1);
-            expect(ws.find('li').text()).toEqual('No requests');
-            sc.stop();
-            ws.remove();
+            this.expectNoRequests();
+            this.sc.stop();
         });
+
 
         it('should support multiple requests', function() {
-            var ws = $('<div class="display: none;"></div>');
-            $workspace.append(ws);
-            var sc = new SinonController({
-                el: ws[0]
-            });
-            sc.render();
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual("No requests");
+            this.expectNoRequests();
 
-            sc.start();
+            this.sc.start();
             var callback = sinon.spy();
-            $.ajax('/test1', {
-                method: 'GET',
-                success: callback
-            });
-            $.ajax('/test2', {
-                method: 'GET',
-                success: callback
-            });
-            sc.render();
-            expect(ws.find('button').prop('disabled')).toBeFalsy();
-            ws.find('textarea').val('{ "id": 1 }');
-            ws.find('button').click();
+            $.ajax($.extend(TestRequest1, { success: callback }));
+            $.ajax($.extend(TestRequest2, { success: callback }));
+            this.sc.render();
+            expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
+            this.$ws.find('textarea').val('{ "id": 1 }');
+            this.$ws.find('button').click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
-            expect(ws.find('li').length).toBe(1);
-            expect(ws.find('li').text()).toBe('/test2');
+            this.expectRows([TestRequest2]);
 
-            ws.find('textarea').val('{ "id": 2 }');
-            ws.find('button').click();
+            this.$ws.find('textarea').val('{ "id": 2 }');
+            this.$ws.find('button').click();
             expect(callback.callCount).toBe(2);
             expect(callback.calledWith({ id: 2})).toBeTruthy();
-            expect(ws.find('li').length).toBe(1);
-            expect(ws.find('li').text()).toEqual("No requests");
-            expect(ws.find('button').prop('disabled')).toBeTruthy();
-            sc.stop();
-            ws.remove();
+            this.expectNoRequests();
+            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.sc.stop();
         });
+
 
         it('should preserve response text in render', function() {
-            var ws = $('<div class="display: none;"></div>');
-            $workspace.append(ws);
-            var sc = new SinonController({
-                el: ws[0]
-            });
-            sc.render();
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual('No requests');
-            expect(ws.find('button').prop('disabled')).toBeTruthy();
-            ws.find('textarea').val('test text');
-            sc.render();
-            expect(ws.find('textarea').val()).toEqual('test text');
-            ws.remove();
+            this.expectNoRequests();
+            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.$ws.find('textarea').val('test text');
+            this.sc.render();
+            expect(this.$ws.find('textarea').val()).toEqual('test text');
         });
 
+
         it('should auto update', function() {
-            var ws = $('<div class="display: none;"></div>');
-            $workspace.append(ws);
-            var sc = new SinonController({
-                el: ws[0]
-            });
-            sc.render();
-            sc.start();
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual('No requests');
-            expect(ws.find('button').prop('disabled')).toBeTruthy();
+            this.sc.start();
+            this.expectNoRequests();
+            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
 
             var callback = sinon.spy();
-            $.ajax('/test1', {
-                method: 'GET',
-                success: callback
-            });
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual('No requests');
-            expect(ws.find('button').prop('disabled')).toBeTruthy();
+            $.ajax($.extend(TestRequest2, { success: callback }));
+            this.expectNoRequests();
+            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
 
             this.clock.tick(1000);
-            expect(ws.find('li').length).toEqual(1);
-            expect(ws.find('li').text()).toEqual('/test1');
-            expect(ws.find('button').prop('disabled')).toBeFalsy();
-            sc.stop();
-            ws.remove();
+            expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
+            this.expectRows([TestRequest2]);
+            this.sc.stop();
         });
     });
 })();

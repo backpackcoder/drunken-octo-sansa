@@ -24,5 +24,57 @@ body { height: 100%; overflow-x: hidden; overflow-y:scroll; }
     border-bottom: solid 2px #2f2f1c;
 }
 
+/* Sinon Controller */
 
+.ui-sinon {
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    padding: 20px;
+}
 
+.ui-sinon legend, .ui-sinon caption {
+    font-size: 14pt;
+    text-align: left;
+    margin-bottom: 20px;
+    border-bottom: 1px dotted #2f2f1c;
+    line-height: 30px;
+    color: #333;
+    width: 300px;
+}
+
+.ui-sinon tbody {
+    border-top: 1px solid #2f2f1c;
+    border-bottom: 1px solid #2f2f1c;
+}
+
+.ui-sinon table td:nth-child(1) {
+    width: 100px;
+}
+
+.ui-sinon table td:nth-child(2) {
+    width: 200px;
+}
+
+.ui-sinon table td:nth-child(3) {
+    width: 200px;
+}
+
+.ui-sinon tbody tr:nth-child(even) {
+    background-color: #ccc;
+}
+
+.ui-sinon table {
+    margin-bottom: 20px;
+}
+
+.ui-sinon textarea {
+    display: block;
+    width: 90%;
+    height: 100px;
+}
+
+.ui-sinon button {
+    line-height: 30px;
+    margin-bottom: 10px;
+    padding: 0 8px;
+}
