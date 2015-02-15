@@ -410,7 +410,8 @@ module.exports = function (grunt) {
                 'clean:server',
                 'bower',
                 'concurrent:test',
-                'autoprefixer'
+                'autoprefixer',
+                'mustache'
             ]);
         }
 
