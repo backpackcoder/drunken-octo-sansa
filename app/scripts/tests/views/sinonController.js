@@ -1,4 +1,4 @@
-/*global describe, it, SinonController, $ */
+/* global describe, it, SinonController, $ */
 'use strict';
 
 (function () {
@@ -12,7 +12,7 @@
         var TestRequest1 = {
             url: '/test1',
             method: 'GET',
-            data : null
+            data: null
         };
 
         var TestRequest2 = {
@@ -21,7 +21,7 @@
             data: '{"id": 100}'
         };
 
-        beforeEach(function() {
+        beforeEach(function () {
             this.$ws = $('<div></div>').css('display', 'none');
             this.sc = new SinonController({
                 el: this.$ws[0]
@@ -31,7 +31,7 @@
             /**
              * Expects "No Requests" text in the table
              */
-            this.expectNoRequests = function() {
+            this.expectNoRequests = function () {
                 expect(this.$ws.find('tbody tr').length).toEqual(1);
                 expect(this.$ws.find('tbody tr').text()).toEqual('No requests');
             };
@@ -40,9 +40,9 @@
              * Checks a row of request objects
              * @param rows
              */
-            this.expectRows = function(rows) {
+            this.expectRows = function (rows) {
                 expect(this.$ws.find('tbody tr').length).toEqual(rows.length);
-                for(var i=rows.length-1; i >= 0; i--) {
+                for (var i = rows.length - 1; i >= 0; i--) {
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(1)').text()).toEqual(rows[i].method);
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(2)').text()).toEqual(rows[i].url);
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(3)').text()).toEqual(rows[i].data || '');
@@ -51,7 +51,7 @@
         });
 
 
-        afterEach(function() {            
+        afterEach(function () {
             this.clock.restore();
             this.$ws.remove();
             delete(this.expectRows);
@@ -59,7 +59,7 @@
         });
 
 
-        it('can be startered and stopped', function(){
+        it('can be startered and stopped', function () {
             this.expectNoRequests();
             $.ajax(TestRequest_404);
             this.sc.render();
@@ -93,7 +93,7 @@
         });
 
 
-        it('should respond to a request', function(){
+        it('should respond to a request', function () {
             this.expectNoRequests();
             expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
 
@@ -110,7 +110,7 @@
         });
 
 
-        it('can respond with error http status codes', function(){
+        it('can respond with error http status codes', function () {
             this.sc.start();
             var callback = sinon.spy();
             $.ajax($.extend(TestRequest1, { error: callback }));
@@ -124,7 +124,7 @@
         });
 
 
-        it('should support multiple requests', function() {
+        it('should support multiple requests', function () {
             this.expectNoRequests();
 
             this.sc.start();
@@ -149,7 +149,7 @@
         });
 
 
-        it('should preserve response text in render', function() {
+        it('should preserve response text in render', function () {
             this.expectNoRequests();
             expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
             this.$ws.find('textarea').val('test text');
@@ -158,7 +158,7 @@
         });
 
 
-        it('should auto update', function() {
+        it('should auto update', function () {
             this.sc.start();
             this.expectNoRequests();
             expect(this.$ws.find('button').prop('disabled')).toBeTruthy();

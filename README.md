@@ -1,4 +1,4 @@
-# drunken-octo-sansa [![Current Build Status](http://dev.the-hammers.net:8111/app/rest/builds/buildType:DrunkenOctoSansa_Build/statusIcon)](http://dev.the-hammers.net:8111/viewLog.html?buildId=lastSuccessful&buildTypeId=DrunkenOctoSansa_Build&tab=buildResultsDiv?guest=1) 
+# drunken-octo-sansa [![Current Build Status](http://dev.the-hammers.net:8111/app/rest/builds/buildType:DrunkenOctoSansa_Build/statusIcon)](http://dev.the-hammers.net:8111/viewType.html?buildTypeId=DrunkenOctoSansa_Build&guest=1) 
 
 A graphical tool for manipulating sinon.fakeServer (http://sinonjs.org/docs/#fakeServer).  There is a [demo site here](http://dev.the-hammers.net/drunken-octo-sansa/).
 

@@ -5,8 +5,7 @@
 /**
  * A view to allow a user to interact with a sinon.fakeServer
  */
-function SinonController(config)
-{
+function SinonController(config) {
     var t = this;
 
     /* The JQuery object reference to the root HTML element */
@@ -27,13 +26,13 @@ function SinonController(config)
      * will be routed through the fake server.
      * @returns {SinonController}
      */
-    t.start =  function() {
+    t.start = function () {
         _server = sinon.fakeServer.create();
         _currentRequest = 0;
         if (_poller) {
             window.clearInterval(_poller);
         }
-        _poller = window.setInterval(function(){
+        _poller = window.setInterval(function () {
             t.render();
         }, 1000);
         return t;
@@ -45,7 +44,7 @@ function SinonController(config)
      * will be sent out normally
      * @returns {SinonController}
      */
-    t.stop = function() {
+    t.stop = function () {
         _server.restore();
         if (_poller) {
             window.clearInterval(_poller);
@@ -58,7 +57,7 @@ function SinonController(config)
      * Starts and then stops the sinon fakeServer
      * @returns {SinonController}
      */
-    t.reset = function(){
+    t.reset = function () {
         return t.start().stop();
     };
 
@@ -67,7 +66,7 @@ function SinonController(config)
      * Renders the HTML
      * @returns {SinonController}
      */
-    t.render = function() {
+    t.render = function () {
         var i = 0, hasRequests = false;
 
         if (t.$el.is(':empty')) {
@@ -106,7 +105,7 @@ function SinonController(config)
      * Sends the response back to the calling method
      * @param ev {event} The event
      */
-    t.sendResponse = function(ev) {
+    t.sendResponse = function (ev) {
         ev.preventDefault();
         var data = t.$el.find('textarea').val();
         var status = new Number(t.$el.find('select[name="statusCode"]').val());

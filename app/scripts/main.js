@@ -1,23 +1,23 @@
 /* global SinonController */
 'use strict';
 
-$(function(){
+$(function () {
     new SinonController({
         el: $('#divSinonController')[0]
     }).render().start();
 
 
-    $('#btnSend').click(function(ev){
+    $('#btnSend').click(function (ev) {
         ev.preventDefault();
         $.ajax($('input[name="url"]').val(), {
             type: $('select[name="method"]').val(),
-            success: function(data) {
+            success: function (data) {
                 $('<div></div>')
                     .addClass('alert alert-success')
                     .text(JSON.stringify(data))
                     .appendTo('#ddResponse');
             },
-            error: function(a,b,c) {
+            error: function (a, b, c) {
                 $('<div></div>')
                     .addClass('alert alert-error')
                     .text(c.message)
