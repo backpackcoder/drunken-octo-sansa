@@ -34,7 +34,6 @@
             this.expectNoRequests = function() {
                 expect(this.$ws.find('tbody tr').length).toEqual(1);
                 expect(this.$ws.find('tbody tr').text()).toEqual('No requests');
-                expect(this.$ws.find('thead').css('display')).toBe('none');
             };
 
             /**
@@ -43,11 +42,10 @@
              */
             this.expectRows = function(rows) {
                 expect(this.$ws.find('tbody tr').length).toEqual(rows.length);
-                expect(this.$ws.find('thead').css('display') === 'none').toBeFalsy();
-                for(var i=rows.length-1; i > 0; i--) {
+                for(var i=rows.length-1; i >= 0; i--) {
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(1)').text()).toEqual(rows[i].method);
                     expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(2)').text()).toEqual(rows[i].url);
-                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(3)').text()).toEqual(rows[i].data);
+                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) + ') td:nth-child(3)').text()).toEqual(rows[i].data || '');
                 }
             };
         });

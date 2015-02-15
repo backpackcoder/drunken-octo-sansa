@@ -42,7 +42,8 @@ module.exports = function (grunt) {
                 tasks: ['wiredep']
             },
             js: {
-                files: ['<%= config.app %>/scripts/{,*/}*.js',
+                files: [
+                    '<%= config.app %>/scripts/{,*/}*.js',
                     '<%= config.app %>/scripts/tests/{,*/}*.js'],
                 tasks: ['jshint'],
                 options: {
@@ -50,7 +51,7 @@ module.exports = function (grunt) {
                 }
             },
             jstest: {
-                files: ['test/spec/{,*/}*.js'],
+                files: ['<%= config.app %>/scripts/tests/{,*/}*.js'],
                 tasks: ['test:watch']
             },
             gruntfile: {
@@ -164,9 +165,6 @@ module.exports = function (grunt) {
                     specs: '<%= config.app %>/scripts/tests/{,*/}*.js',
                     vendor: [
                         'bower_components/jquery/dist/jquery.js',
-                        'bower_components/underscore/underscore.js',
-                        'bower_components/backbone/backbone.js',
-                        'bower_components/mustache/mustache.js',
                         'bower_components/bootstrap/docs/assets/js/bootstrap.js',
                         '<%= config.app %>/scripts/sinon-1.10.3.js'
                     ],

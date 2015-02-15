@@ -47,8 +47,13 @@ body { height: 100%; overflow-x: hidden; overflow-y:scroll; }
     border-bottom: 1px solid #2f2f1c;
 }
 
+.ui-sinon td:nth-child(1).no-requests {
+    width: 500px;
+}
+
 .ui-sinon table td:nth-child(1) {
     width: 100px;
+    text-align: center;
 }
 
 .ui-sinon table td:nth-child(2) {

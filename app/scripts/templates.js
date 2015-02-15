@@ -1,4 +1,0 @@
-var Templates = {
-    "sinonController" : '<div class="ui-sinon"><div class="requests"><table><caption>Requests</caption><thead><tr><th>Method</th><th>Url</th><th>Body</th></tr></thead><tbody>{{#requests}}<tr><td>{{method}}</td><td>{{url}}</td><td>{{requestBody}}</td></tr>{{/requests}}{{^requests}}<tr><td>No requests</td></tr>{{/requests}}</tbody></table></div><form class="response"><legend>Response</legend><textarea name="responseBody" placeholder="enter json response"></textarea><select name="statusCode"><option value="200" selected="selected">200 OK</option><option value="400">400 Bad Request</option><option value="403">403 Forbidden</option><option value="404">404 Not Found</option><option value="500">500 Server Error</option></select><select name="contentType"><option selected="selected">application/json</option><option>text/html</option><option>text/plain</option></select><button type="submit">Send Response</button></form></div>',
-    "done": "true"
-  };

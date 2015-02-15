@@ -1,28 +1,25 @@
-/* global Backbone, Mustache, Templates, sinon */
+/* global Templates, sinon */
 /* exported SinonController */
 'use strict';
 
 /**
  * A view to allow a user to interact with a sinon.fakeServer
  */
-var SinonController = Backbone.View.extend({
-    poller: null,
+function SinonController(config)
+{
+    var t = this;
 
-    currentRequest: 0,
+    /* The JQuery object reference to the root HTML element */
+    this.$el = $(config.el);
 
-    events: {
-        'click button' : 'sendResponse'
-    },
+    /* index of the current request (used by response) */
+    var _currentRequest = 0;
 
+    /* The sinon.fakeSever instance */
+    var _server = null;
 
-    /**
-     * Creates a SinonController
-     * @param options No options
-     */
-    initialize: function(options) {
-        // jshint unused:false
-        this.server = null;
-    },
+    /* The polling timeer for new requests */
+    var _poller = null;
 
 
     /**
@@ -30,18 +27,17 @@ var SinonController = Backbone.View.extend({
      * will be routed through the fake server.
      * @returns {SinonController}
      */
-    start: function() {
-        var t = this;
-        this.server = sinon.fakeServer.create();
-        this.currentRequest = 0;
-        if (this.poller) {
-            window.clearInterval(this.poller);
+    t.start =  function() {
+        _server = sinon.fakeServer.create();
+        _currentRequest = 0;
+        if (_poller) {
+            window.clearInterval(_poller);
         }
-        this.poller = window.setInterval(function(){
+        _poller = window.setInterval(function(){
             t.render();
         }, 1000);
-        return this;
-    },
+        return t;
+    };
 
 
     /**
@@ -49,80 +45,74 @@ var SinonController = Backbone.View.extend({
      * will be sent out normally
      * @returns {SinonController}
      */
-    stop: function() {
-        this.server.restore();
-        if (this.poller) {
-            window.clearInterval(this.poller);
+    t.stop = function() {
+        _server.restore();
+        if (_poller) {
+            window.clearInterval(_poller);
         }
-        return this;
-    },
+        return t;
+    };
 
 
     /**
      * Starts and then stops the sinon fakeServer
      * @returns {SinonController}
      */
-    reset: function(){
-        this.start();
-        this.stop();
-        return this;
-    },
+    t.reset = function(){
+        return t.start().stop();
+    };
 
 
     /**
      * Renders the HTML
      * @returns {SinonController}
      */
-    render: function() {
-        var requests = [], setIndex = false;
-        this.currentRequest = 0;
-        if (this.server) {
-            for (var i = 0; i < this.server.requests.length; i++) {
-                if (this.server.requests[i].readyState !== 4) {
-                    if (! setIndex) {
-                        setIndex = true;
-                        this.currentRequest = i;
+    t.render = function() {
+        var i = 0, hasRequests = false;
+
+        if (t.$el.is(':empty')) {
+            t.$el.html(Templates.sinonController);
+            t.$el.find('button').click(t.sendResponse);
+        }
+
+        t.$el.find('tbody').empty().append('<tr><td class="no-requests" colspan="3">No requests</td></tr>');
+
+        if (_server) {
+            _currentRequest = _server.requests.length;
+            for (i = 0; i < _server.requests.length; i++) {
+                if (4 === _server.requests[i].readyState) {
+                    t.$el.find('.request-' + i.length).remove();
+                } else {
+                    hasRequests = true;
+                    _currentRequest = Math.min(i, _currentRequest);
+                    t.$el.find('tbody td.no-requests').parent().remove();
+                    if (t.$el.find('.request-' + i).length == 0) {
+                        $('<tr><td>' + _server.requests[i].method + '</td>' +
+                            '<td>' + _server.requests[i].url + '</td>' +
+                            '<td>' + (_server.requests[i].requestBody || '') + '</td></tr>')
+                            .addClass('request-' + i)
+                            .appendTo(t.$el.find('tbody'));
                     }
-                    requests.push(this.server.requests[i]);
                 }
             }
         }
 
-        var responseTxt = this.$el.find('textarea').val();
-        if (this.$el.is(':empty')) {
-            this.$el.html(
-                Mustache.render(Templates.sinonController,
-                    { requests: requests })
-            );
-        } else {
-            this.$el.find('tbody').replaceWith(
-            $(Mustache.render(Templates.sinonController,
-                { requests: requests }))
-                .find('tbody'));
-        }
-        this.$el.find('textarea').val(responseTxt);
-        this.$el.find('button').prop('disabled',
-            (requests.length === 0));
-        if (requests.length === 0) {
-            this.$el.find('thead').hide();
-        } else {
-            this.$el.find('thead').show();
-        }
+        this.$el.find('button').prop('disabled', !hasRequests);
         return this;
-    },
+    };
 
 
     /**
      * Sends the response back to the calling method
      * @param ev {event} The event
      */
-    sendResponse: function(ev) {
+    t.sendResponse = function(ev) {
         ev.preventDefault();
-        var data = this.$el.find('textarea').val();
-        var status = new Number(this.$el.find('select[name="statusCode"]').val());
+        var data = t.$el.find('textarea').val();
+        var status = new Number(t.$el.find('select[name="statusCode"]').val());
         var contentType = { 'Content-Type': 'application/json' };
-        this.server.requests[this.currentRequest].respond(
+        _server.requests[_currentRequest].respond(
             parseInt(status), contentType, data);
-        this.render();
-    }
-});
+        t.render();
+    };
+}
