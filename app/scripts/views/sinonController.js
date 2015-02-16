@@ -21,6 +21,23 @@ function SinonController(config) {
     var _poller = null;
 
 
+    var _validateJson = function() {
+        var jsonTxt = t.$el.find('textarea').val();
+        var hasRequests = t.$el.find('td.no-requests').length > 0;
+        var isValid = true;
+        try {
+            JSON.parse(jsonTxt);
+            t.$el.find('textarea').removeClass('error');
+        }
+        catch(e) {
+            isValid = false;
+            t.$el.find('textarea').addClass('error');
+        }
+
+        t.$el.find('button').prop('disabled', !(isValid && hasRequests));
+    };
+
+
     /**
      * Starts the sinon fakeServer.  While the server is started all requests
      * will be routed through the fake server.
@@ -72,6 +89,8 @@ function SinonController(config) {
         if (t.$el.is(':empty')) {
             t.$el.html(Templates.sinonController);
             t.$el.find('button').click(t.sendResponse);
+            t.$el.find('select[name="statusCode"]').on('change', _validateJson);
+            t.$el.find('textarea').on('keyup', _validateJson);
         }
 
         t.$el.find('tbody').empty().append('<tr><td class="no-requests" colspan="3">No requests</td></tr>');
@@ -95,8 +114,7 @@ function SinonController(config) {
                 }
             }
         }
-
-        this.$el.find('button').prop('disabled', !hasRequests);
+        _validateJson();
         return this;
     };
 
