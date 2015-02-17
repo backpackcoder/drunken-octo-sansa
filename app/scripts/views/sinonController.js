@@ -23,17 +23,18 @@ function SinonController(config) {
 
     var _validateJson = function() {
         var jsonTxt = t.$el.find('textarea').val();
-        var hasRequests = t.$el.find('td.no-requests').length > 0;
+        var hasRequests = t.$el.find('td.no-requests').length === 0;
         var isValid = true;
-        try {
-            JSON.parse(jsonTxt);
-            t.$el.find('textarea').removeClass('error');
+        if ('200' === t.$el.find('select[name="statusCode"]').val()) {
+            try {
+                JSON.parse(jsonTxt);
+                t.$el.find('textarea').removeClass('error');
+            }
+            catch (e) {
+                isValid = false;
+                t.$el.find('textarea').addClass('error');
+            }
         }
-        catch(e) {
-            isValid = false;
-            t.$el.find('textarea').addClass('error');
-        }
-
         t.$el.find('button').prop('disabled', !(isValid && hasRequests));
     };
 

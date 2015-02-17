@@ -164,6 +164,7 @@
 
 
         it('should disable/enable send response button', function(){
+            this.sc.start();
             // initial state 200, no request, empty text
             this.expectNoRequests();
             expect(this.$ws.find('textarea').val()).toBe('');
@@ -176,7 +177,9 @@
 
             // non 200, request
             $.ajax(TestRequest1);
-            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.clock.tick(1500);
+            this.$ws.find('select[name="statusCode"]').val(500).trigger('change');
+            expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
 
             // 200, request, empty text
             this.$ws.find('select[name="statusCode"]').val(200).trigger('change');
