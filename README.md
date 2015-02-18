@@ -46,23 +46,21 @@ grunt serve
 [![Demonstration video](http://img.youtube.com/vi/PGpKOU4UcqY/0.jpg)](http://www.youtube.com/watch?v=PGpKOU4UcqY)
 
 
-The code being executed when "send" is pressed:
+The $.ajax call executed when "send" is pressed:
 ```javascript
-    $('#btnSend').click(function(ev){
-        ev.preventDefault();
-        $.ajax($('input[name="url"]').val(), {
-            success: function(data) {
-                $('<div></div>')
-                    .addClass('alert alert-success')
-                    .text(JSON.stringify(data))
-                    .appendTo('#ddResponse');
-            },
-            error: function(a,b,c) {
-                $('<div></div>')
-                    .addClass('alert alert-error')
-                    .text(c.message)
-                    .appendTo('#ddResponse');
-            }
-        });
-    });
+$.ajax($('input[name="url"]').val(), {
+    type: $('select[name="method"]').val(),
+    data: $('textarea[name="requestBody"]').val(),
+    complete: function(xhr, statusText) {
+        if ( 'No Responses' === $('#tblResponse tbody tr').text().trim() ) {
+            $('#tblResponse tbody tr').remove();
+        }
+
+        $('<tr></tr>')
+            .addClass(statusText)
+            .append($('<td></td>').text(xhr.status).css('text-align', 'center'))
+            .append($('<td></td>').text(xhr.responseText))
+            .appendTo('#tblResponse tbody');
+    }
+});
 ```

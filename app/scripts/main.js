@@ -10,6 +10,7 @@ $(function () {
         ev.preventDefault();
         $.ajax($('input[name="url"]').val(), {
             type: $('select[name="method"]').val(),
+            data: $('textarea[name="requestBody"]').val(),
             complete: function(xhr, statusText) {
                 if ( 'No Responses' === $('#tblResponse tbody tr').text().trim() ) {
                     $('#tblResponse tbody tr').remove();

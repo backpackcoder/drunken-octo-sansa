@@ -36,16 +36,16 @@
             <form id="formRequest" class="form-inline">
                 <fieldset>
                     <legend>Send AJAX request via $.ajax(url)</legend>
-                    <div class="input-append input-prepend row-fluid">
-                        <select name="method" style="width: 8em;">
-                            <option value="GET" selected="selected">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                            <option value="DELETE">DELETE</option>
-                        </select>
-                        <input type="text" name="url" placeholder="Enter url and press send" class="span8">
-                        <button id="btnSend" class="btn" type="submit">Send</button>
-                    </div>
+                    <textarea class="input-block-level" placeholder="enter request body" name="requestBody" style="margin-bottom: 4px; height: 90px;"></textarea>
+                    <select name="method" class="span2">
+                        <option value="GET" selected="selected">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                    <input type="text" name="url" placeholder="Enter url and press send" class="span8">
+                    <button id="btnSend" class="btn span2" type="submit" style="float:right;">Send</button>
+
                 </fieldset>
             </form>
             <div>
