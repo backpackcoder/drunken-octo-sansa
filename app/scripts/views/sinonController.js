@@ -105,7 +105,7 @@ function SinonController(config) {
                     hasRequests = true;
                     _currentRequest = Math.min(i, _currentRequest);
                     t.$el.find('tbody td.no-requests').parent().remove();
-                    if (t.$el.find('.request-' + i).length == 0) {
+                    if (t.$el.find('.request-' + i).length === 0) {
                         var $tr = $('<tr></tr>').addClass('request-' + i);
                         $('<td></td>').text(_server.requests[i].method).appendTo($tr);
                         $('<td></td>').text(_server.requests[i].url).appendTo($tr);
@@ -139,7 +139,7 @@ function SinonController(config) {
     t.sendResponse = function (ev) {
         ev.preventDefault();
         var data = t.$el.find('textarea').val();
-        var status = new Number(t.$el.find('select[name="statusCode"]').val());
+        var status = Number(t.$el.find('select[name="statusCode"]').val());
         var contentType = { 'Content-Type': 'application/json' };
         _server.requests[_currentRequest].respond(
             parseInt(status), contentType, data);

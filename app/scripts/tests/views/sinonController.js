@@ -1,21 +1,21 @@
-/* global describe, it, SinonController, $ */
+/* global describe, it, beforeEach, afterEach, expect, sinon, SinonController, $ */
 'use strict';
 
 (function () {
     describe('SinonController', function () {
-        var TestRequest_404 = {
+        var testRequest404 = {
             url: '/expected-404',
             async: false,
             method: 'GET'
         };
 
-        var TestRequest1 = {
+        var testRequest1 = {
             url: '/test1',
             method: 'GET',
             data: null
         };
 
-        var TestRequest2 = {
+        var testRequest2 = {
             url: '/test2',
             method: 'PUT',
             data: '{\n  "id": 100\n}'
@@ -64,29 +64,29 @@
 
         it('can be startered and stopped', function () {
             this.expectNoRequests();
-            $.ajax(TestRequest_404);
+            $.ajax(testRequest404);
             this.sc.render();
             this.expectNoRequests();
             this.sc.start();
-            $.ajax(TestRequest1);
+            $.ajax(testRequest1);
             this.sc.render();
-            this.expectRows([TestRequest1]);
+            this.expectRows([testRequest1]);
             this.sc.stop();
-            $.ajax(TestRequest_404);
+            $.ajax(testRequest404);
             this.sc.render();
-            this.expectRows([TestRequest1]);
+            this.expectRows([testRequest1]);
         });
 
 
         it('should list requests', function () {
             this.expectNoRequests();
             this.sc.start();
-            $.ajax(TestRequest1);
+            $.ajax(testRequest1);
             this.sc.render();
-            this.expectRows([TestRequest1]);
-            $.ajax(TestRequest2);
+            this.expectRows([testRequest1]);
+            $.ajax(testRequest2);
             this.sc.render();
-            this.expectRows([TestRequest1, TestRequest2]);
+            this.expectRows([testRequest1, testRequest2]);
             this.sc.stop();
         });
 
@@ -95,7 +95,7 @@
             this.expectNoRequests();
             this.sc.start();
             var callback = sinon.spy();
-            $.ajax($.extend(TestRequest1, { success: callback }));
+            $.ajax($.extend(testRequest1, { success: callback }));
             this.sc.render();
             this.$ws.find('textarea').val('{ "id": 1 }');
             this.$ws.find('button').click();
@@ -109,7 +109,7 @@
         it('can respond with error http status codes', function () {
             this.sc.start();
             var callback = sinon.spy();
-            $.ajax($.extend(TestRequest1, { error: callback }));
+            $.ajax($.extend(testRequest1, { error: callback }));
             this.sc.render();
             this.$ws.find('select[name="statusCode"]').val(400);
             this.$ws.find('button').click();
@@ -124,14 +124,14 @@
             this.expectNoRequests();
             this.sc.start();
             var callback = sinon.spy();
-            $.ajax($.extend(TestRequest1, { success: callback }));
-            $.ajax($.extend(TestRequest2, { success: callback }));
+            $.ajax($.extend(testRequest1, { success: callback }));
+            $.ajax($.extend(testRequest2, { success: callback }));
             this.sc.render();
             this.$ws.find('textarea').val('{ "id": 1 }');
             this.$ws.find('button').click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
-            this.expectRows([TestRequest2]);
+            this.expectRows([testRequest2]);
             this.$ws.find('textarea').val('{ "id": 2 }');
             this.$ws.find('button').click();
             expect(callback.callCount).toBe(2);
@@ -155,10 +155,10 @@
             this.sc.start();
             this.expectNoRequests();
             var callback = sinon.spy();
-            $.ajax($.extend(TestRequest2, { success: callback }));
+            $.ajax($.extend(testRequest2, { success: callback }));
             this.expectNoRequests();
             this.clock.tick(1000);
-            this.expectRows([TestRequest2]);
+            this.expectRows([testRequest2]);
             this.sc.stop();
         });
 
@@ -176,7 +176,7 @@
             expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
 
             // non 200, request
-            $.ajax(TestRequest1);
+            $.ajax(testRequest1);
             this.clock.tick(1500);
             this.$ws.find('select[name="statusCode"]').val(500).trigger('change');
             expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
@@ -199,10 +199,10 @@
             this.expectNoRequests();
             expect(this.$ws.find('textarea').val()).toBe('');
             expect(this.$ws.find('textarea').hasClass('error')).toBeTruthy();
-            $.ajax(TestRequest1);
+            $.ajax(testRequest1);
             this.$ws.find('textarea').val('{ "id" :').trigger('keyup');
             expect(this.$ws.find('textarea').hasClass('error')).toBeTruthy();
-            $.ajax(TestRequest1);
+            $.ajax(testRequest1);
             this.$ws.find('textarea').val('{ "id" : 1 }').trigger('keyup');
             expect(this.$ws.find('textarea').hasClass('error')).toBeFalsy();
         });

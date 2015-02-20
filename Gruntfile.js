@@ -148,6 +148,7 @@ module.exports = function (grunt) {
             },
             all: [
                 'Gruntfile.js',
+                '<%= config.app %>/scripts/tests/{,*/}*.js',
                 '<%= config.app %>/scripts/{,*/}*.js',
                 '!<%= config.app %>/scripts/vendor/*',
                 '!<%= config.app %>/scripts/sinon-1.10.3.js',
@@ -392,6 +393,7 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'bower',
+            'jshint',
             'bootstrap',
             'wiredep',
             'useminPrepare',
@@ -409,6 +411,7 @@ module.exports = function (grunt) {
             grunt.task.run([
                 'clean:server',
                 'bower',
+                'jshint',
                 'concurrent:test',
                 'autoprefixer',
                 'mustache'
@@ -424,6 +427,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'bower',
+        'jshint',
         'bootstrap',
         'wiredep',
         'useminPrepare',
