@@ -1,4 +1,4 @@
-html, body { width: 100%; height: 100%; scroll: none; overflow: hidden; }
+html, body { width: 100%; height: 100%; overflow-x: hidden; }
 
 .jasmine_reporter .summary {
     -webkit-column-width: 300px;

@@ -106,11 +106,23 @@ function SinonController(config) {
                     _currentRequest = Math.min(i, _currentRequest);
                     t.$el.find('tbody td.no-requests').parent().remove();
                     if (t.$el.find('.request-' + i).length == 0) {
-                        $('<tr><td>' + _server.requests[i].method + '</td>' +
-                            '<td>' + _server.requests[i].url + '</td>' +
-                            '<td>' + (_server.requests[i].requestBody || '') + '</td></tr>')
-                            .addClass('request-' + i)
-                            .appendTo(t.$el.find('tbody'));
+                        var $tr = $('<tr></tr>').addClass('request-' + i);
+                        $('<td></td>').text(_server.requests[i].method).appendTo($tr);
+                        $('<td></td>').text(_server.requests[i].url).appendTo($tr);
+                        if (_server.requests[i].requestBody) {
+                            try {
+                                var reqObj = JSON.parse(_server.requests[i].requestBody);
+                                $('<td></td>')
+                                    .append($('<pre></pre>').text(
+                                        JSON.stringify(reqObj, undefined, 2)))
+                                        .appendTo($tr);
+                            } catch (e) {
+                                $('<td></td>').text(_server.requests[i].url).appendTo($tr);
+                            }
+                        } else {
+                            $('<td></td>').appendTo($tr);
+                        }
+                        $tr.appendTo(t.$el.find('tbody'));
                     }
                 }
             }

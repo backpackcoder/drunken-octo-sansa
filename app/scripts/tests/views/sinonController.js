@@ -18,7 +18,7 @@
         var TestRequest2 = {
             url: '/test2',
             method: 'PUT',
-            data: '{"id": 100}'
+            data: '{\n  "id": 100\n}'
         };
 
         beforeEach(function () {
