@@ -22,18 +22,23 @@
         };
 
         beforeEach(function () {
+            var t = this;
             this.$ws = $('<div></div>').css('display', 'none');
             this.sc = new SinonController({
                 el: this.$ws[0]
             }).render();
             this.clock = sinon.useFakeTimers();
-
+            this.$ta = this.$ws.find('textarea');
+            this.$sel = this.$ws.find('select[name="statusCode"]');
+            this.$btn = this.$ws.find('button');
+            
             /**
              * Expects "No Requests" text in the table
              */
             this.expectNoRequests = function () {
-                expect(this.$ws.find('tbody tr').length).toEqual(1);
-                expect(this.$ws.find('tbody tr').text()).toEqual('No requests');
+                var $tr = t.$ws.find('tbody tr');
+                expect($tr.length).toEqual(1);
+                expect($tr.text()).toEqual('No requests');
             };
 
             /**
@@ -41,14 +46,12 @@
              * @param rows
              */
             this.expectRows = function (rows) {
-                expect(this.$ws.find('tbody tr').length).toEqual(rows.length);
+                var $tr = t.$ws.find('tbody tr');
                 for (var i = rows.length - 1; i >= 0; i--) {
-                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) +
-                        ') td:nth-child(1)').text()).toEqual(rows[i].method);
-                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) +
-                        ') td:nth-child(2)').text()).toEqual(rows[i].url);
-                    expect(this.$ws.find('tbody tr:nth-child(' + (i + 1) +
-                        ') td:nth-child(3)').text()).toEqual(rows[i].data || '');
+                    var $td = $( $tr[i]).find('td');
+                    expect( $( $td[0] ).text() ).toEqual(rows[i].method);
+                    expect( $( $td[1] ).text() ).toEqual(rows[i].url);
+                    expect( $( $td[2] ).text() ).toEqual(rows[i].data || '');
                 }
             };
         });
@@ -57,8 +60,6 @@
         afterEach(function () {
             this.clock.restore();
             this.$ws.remove();
-            delete(this.expectRows);
-            delete(this.expectNoRequests);
         });
 
 
@@ -97,8 +98,8 @@
             var callback = sinon.spy();
             $.ajax($.extend(testRequest1, { success: callback }));
             this.sc.render();
-            this.$ws.find('textarea').val('{ "id": 1 }');
-            this.$ws.find('button').click();
+            this.$ta.val('{ "id": 1 }');
+            this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
             this.expectNoRequests();
@@ -111,8 +112,8 @@
             var callback = sinon.spy();
             $.ajax($.extend(testRequest1, { error: callback }));
             this.sc.render();
-            this.$ws.find('select[name="statusCode"]').val(400);
-            this.$ws.find('button').click();
+            this.$sel.val(400);
+            this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWithMatch({ status: 400 })).toBeTruthy();
             this.expectNoRequests();
@@ -127,13 +128,13 @@
             $.ajax($.extend(testRequest1, { success: callback }));
             $.ajax($.extend(testRequest2, { success: callback }));
             this.sc.render();
-            this.$ws.find('textarea').val('{ "id": 1 }');
-            this.$ws.find('button').click();
+            this.$ta.val('{ "id": 1 }');
+            this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
             this.expectRows([testRequest2]);
-            this.$ws.find('textarea').val('{ "id": 2 }');
-            this.$ws.find('button').click();
+            this.$ta.val('{ "id": 2 }');
+            this.$btn.click();
             expect(callback.callCount).toBe(2);
             expect(callback.calledWith({ id: 2})).toBeTruthy();
             this.expectNoRequests();
@@ -143,11 +144,11 @@
 
         it('should preserve form in render', function () {
             this.expectNoRequests();
-            this.$ws.find('textarea').val('test text');
-            this.$ws.find('select[name="statusCode"]').val(400);
+            this.$ta.val('test text');
+            this.$sel.val(400);
             this.sc.render();
-            expect(this.$ws.find('textarea').val()).toBe('test text');
-            expect(this.$ws.find('select[name="statusCode"]').val()).toBe('400');
+            expect(this.$ta.val()).toBe('test text');
+            expect(this.$sel.val()).toBe('400');
         });
 
 
@@ -163,48 +164,47 @@
         });
 
 
+
         it('should disable/enable send response button', function(){
             this.sc.start();
             // initial state 200, no request, empty text
             this.expectNoRequests();
-            expect(this.$ws.find('textarea').val()).toBe('');
-            expect(this.$ws.find('select[name="statusCode"]').val()).toBe('200');
-            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            expect(this.$ta.val()).toBe('');
+            expect(this.$sel.val()).toBe('200');
+            expect(this.$btn.prop('disabled')).toBeTruthy();
 
             // non 200, no request
-            this.$ws.find('select[name="statusCode"]').val(400).trigger('change');
-            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.$sel.val(400).trigger('change');
+            expect(this.$btn.prop('disabled')).toBeTruthy();
 
             // non 200, request
             $.ajax(testRequest1);
             this.clock.tick(1500);
-            this.$ws.find('select[name="statusCode"]').val(500).trigger('change');
-            expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
+            this.$sel.val(500).trigger('change');
+            expect(this.$btn.prop('disabled')).toBeFalsy();
 
             // 200, request, empty text
-            this.$ws.find('select[name="statusCode"]').val(200).trigger('change');
-            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.$sel.val(200).trigger('change');
+            expect(this.$btn.prop('disabled')).toBeTruthy();
 
             // 200, request, valid text
-            this.$ws.find('textarea').val('{ "id"  : 1}').trigger('keyup');
-            expect(this.$ws.find('button').prop('disabled')).toBeFalsy();
+            this.$ta.val('{ "id"  : 1}').trigger('keyup');
+            expect(this.$btn.prop('disabled')).toBeFalsy();
 
             // 200, request, invalid text
-            this.$ws.find('textarea').val(' : 1}').trigger('keyup');
-            expect(this.$ws.find('button').prop('disabled')).toBeTruthy();
+            this.$ta.val(' : 1}').trigger('keyup');
+            expect(this.$btn.prop('disabled')).toBeTruthy();
         });
 
 
         it('should add error class to textare for invalid json', function(){
             this.expectNoRequests();
-            expect(this.$ws.find('textarea').val()).toBe('');
-            expect(this.$ws.find('textarea').hasClass('error')).toBeTruthy();
+            expect(this.$ta.val()).toBe('');
+            expect(this.$ta.hasClass('error')).toBeTruthy();
             $.ajax(testRequest1);
-            this.$ws.find('textarea').val('{ "id" :').trigger('keyup');
-            expect(this.$ws.find('textarea').hasClass('error')).toBeTruthy();
-            $.ajax(testRequest1);
-            this.$ws.find('textarea').val('{ "id" : 1 }').trigger('keyup');
-            expect(this.$ws.find('textarea').hasClass('error')).toBeFalsy();
+            this.$ta.val('{ "id" :').trigger('keyup');
+            this.$ta.val('{ "id" : 1 }').trigger('keyup');
+            expect(this.$ta.hasClass('error')).toBeFalsy();
         });
     });
 })();
