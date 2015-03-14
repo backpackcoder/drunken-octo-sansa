@@ -21,12 +21,13 @@
             data: '{\n  "id": 100\n}'
         };
 
+
         beforeEach(function () {
             var t = this;
-            this.$ws = $('<div></div>').css('display', 'none');
             this.sc = new SinonController({
-                el: this.$ws[0]
+                el : '<div/>'
             }).render();
+            this.$ws = this.sc.$el;
             this.clock = sinon.useFakeTimers();
             this.$ta = this.$ws.find('textarea');
             this.$sel = this.$ws.find('select[name="statusCode"]');
@@ -37,8 +38,7 @@
              */
             this.expectNoRequests = function () {
                 var $tr = t.$ws.find('tbody tr');
-                expect($tr.length).toEqual(1);
-                expect($tr.text()).toEqual('No requests');
+                expect($tr.length).toEqual(0);
             };
 
             /**
@@ -49,9 +49,9 @@
                 var $tr = t.$ws.find('tbody tr');
                 for (var i = rows.length - 1; i >= 0; i--) {
                     var $td = $( $tr[i]).find('td');
-                    expect( $( $td[0] ).text() ).toEqual(rows[i].method);
-                    expect( $( $td[1] ).text() ).toEqual(rows[i].url);
-                    expect( $( $td[2] ).text() ).toEqual(rows[i].data || '');
+                    expect( $( $td[1] ).text() ).toEqual(rows[i].method);
+                    expect( $( $td[2] ).text() ).toEqual(rows[i].url);
+                    expect( $( $td[3] ).text() ).toEqual(rows[i].data || '');
                 }
             };
         });
@@ -64,114 +64,45 @@
 
 
         it('can be startered and stopped', function () {
-            this.expectNoRequests();
-            $.ajax(testRequest404);
-            this.sc.render();
-            this.expectNoRequests();
-            this.sc.start();
-            $.ajax(testRequest1);
-            this.sc.render();
-            this.expectRows([testRequest1]);
-            this.sc.stop();
-            $.ajax(testRequest404);
-            this.sc.render();
-            this.expectRows([testRequest1]);
-        });
+            var t = this;
+            function _sendAndExpect(request, rows) {
+                $.ajax(request);
+                t.clock.tick(1100);
+                t.expectRows(rows);
+            }
 
-
-        it('should list requests', function () {
+            this.expectNoRequests();
+            _sendAndExpect(testRequest404, []);
             this.expectNoRequests();
             this.sc.start();
-            $.ajax(testRequest1);
-            this.sc.render();
-            this.expectRows([testRequest1]);
-            $.ajax(testRequest2);
-            this.sc.render();
-            this.expectRows([testRequest1, testRequest2]);
+            _sendAndExpect(testRequest1, [testRequest1]);
             this.sc.stop();
-        });
-
-
-        it('should respond to a request', function () {
-            this.expectNoRequests();
-            this.sc.start();
-            var callback = sinon.spy();
-            $.ajax($.extend(testRequest1, { success: callback }));
-            this.sc.render();
-            this.$ta.val('{ "id": 1 }');
-            this.$btn.click();
-            expect(callback.calledOnce).toBeTruthy();
-            expect(callback.calledWith({ id: 1})).toBeTruthy();
-            this.expectNoRequests();
-            this.sc.stop();
-        });
-
-
-        it('can respond with error http status codes', function () {
-            this.sc.start();
-            var callback = sinon.spy();
-            $.ajax($.extend(testRequest1, { error: callback }));
-            this.sc.render();
-            this.$sel.val(400);
-            this.$btn.click();
-            expect(callback.calledOnce).toBeTruthy();
-            expect(callback.calledWithMatch({ status: 400 })).toBeTruthy();
-            this.expectNoRequests();
-            this.sc.stop();
+            _sendAndExpect(testRequest404, [testRequest1]);
         });
 
 
         it('should support multiple requests', function () {
-            this.expectNoRequests();
             this.sc.start();
-            var callback = sinon.spy();
-            $.ajax($.extend(testRequest1, { success: callback }));
-            $.ajax($.extend(testRequest2, { success: callback }));
-            this.sc.render();
+            var callback = sinon.spy(), errorCallback = sinon.spy();
+            $.ajax($.extend(testRequest1, { success: callback, error: errorCallback }));
+            $.ajax($.extend(testRequest2, { success: callback, error: errorCallback }));
+            this.clock.tick(1200);
             this.$ta.val('{ "id": 1 }');
             this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
             expect(callback.calledWith({ id: 1})).toBeTruthy();
             this.expectRows([testRequest2]);
-            this.$ta.val('{ "id": 2 }');
-            this.$btn.click();
-            expect(callback.callCount).toBe(2);
-            expect(callback.calledWith({ id: 2})).toBeTruthy();
-            this.expectNoRequests();
-            this.sc.stop();
-        });
-
-
-        it('should preserve form in render', function () {
-            this.expectNoRequests();
-            this.$ta.val('test text');
             this.$sel.val(400);
-            this.sc.render();
-            expect(this.$ta.val()).toBe('test text');
-            expect(this.$sel.val()).toBe('400');
-        });
-
-
-        it('should auto update requests', function () {
-            this.sc.start();
+            this.$btn.click();
+            expect(errorCallback.calledOnce).toBeTruthy();
+            expect(errorCallback.calledWithMatch({ status: 400 })).toBeTruthy();
             this.expectNoRequests();
-            var callback = sinon.spy();
-            $.ajax($.extend(testRequest2, { success: callback }));
-            this.expectNoRequests();
-            this.clock.tick(1000);
-            this.expectRows([testRequest2]);
             this.sc.stop();
         });
-
 
 
         it('should disable/enable send response button', function(){
             this.sc.start();
-            // initial state 200, no request, empty text
-            this.expectNoRequests();
-            expect(this.$ta.val()).toBe('');
-            expect(this.$sel.val()).toBe('200');
-            expect(this.$btn.prop('disabled')).toBeTruthy();
 
             // non 200, no request
             this.$sel.val(400).trigger('change');
@@ -189,22 +120,13 @@
 
             // 200, request, valid text
             this.$ta.val('{ "id"  : 1}').trigger('keyup');
+            expect(this.$ta.hasClass('error')).toBeFalsy();
             expect(this.$btn.prop('disabled')).toBeFalsy();
 
             // 200, request, invalid text
             this.$ta.val(' : 1}').trigger('keyup');
-            expect(this.$btn.prop('disabled')).toBeTruthy();
-        });
-
-
-        it('should add error class to textare for invalid json', function(){
-            this.expectNoRequests();
-            expect(this.$ta.val()).toBe('');
             expect(this.$ta.hasClass('error')).toBeTruthy();
-            $.ajax(testRequest1);
-            this.$ta.val('{ "id" :').trigger('keyup');
-            this.$ta.val('{ "id" : 1 }').trigger('keyup');
-            expect(this.$ta.hasClass('error')).toBeFalsy();
+            expect(this.$btn.prop('disabled')).toBeTruthy();
         });
     });
 })();
