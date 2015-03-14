@@ -166,9 +166,11 @@ module.exports = function (grunt) {
                     specs: '<%= config.app %>/scripts/tests/{,*/}*.js',
                     vendor: [
                         'bower_components/jquery/dist/jquery.js',
+                        'bower_components/underscore/underscore.js',
                         'bower_components/bootstrap/docs/assets/js/bootstrap.js',
                         '<%= config.app %>/scripts/sinon-1.10.3.js'
                     ],
+                    keepRunner: true,
                     junit: {
                         path: 'test_results',
                         consolidate: true
@@ -411,6 +413,23 @@ module.exports = function (grunt) {
             grunt.task.run([
                 'clean:server',
                 'bower',
+                'jshint',
+                'concurrent:test',
+                'autoprefixer',
+                'mustache'
+            ]);
+        }
+
+        grunt.task.run([
+            'connect:test',
+            'jasmine'
+        ]);
+    });
+
+    grunt.registerTask('qtest', function (target) {
+        if (target !== 'watch') {
+            grunt.task.run([
+                'clean:server',
                 'jshint',
                 'concurrent:test',
                 'autoprefixer',

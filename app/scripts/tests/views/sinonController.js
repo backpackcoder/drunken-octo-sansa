@@ -23,10 +23,10 @@
 
         beforeEach(function () {
             var t = this;
-            this.$ws = $('<div></div>').css('display', 'none');
             this.sc = new SinonController({
-                el: this.$ws[0]
+                el : '<div/>'
             }).render();
+            this.$ws = this.sc.$el;
             this.clock = sinon.useFakeTimers();
             this.$ta = this.$ws.find('textarea');
             this.$sel = this.$ws.find('select[name="statusCode"]');
@@ -37,8 +37,7 @@
              */
             this.expectNoRequests = function () {
                 var $tr = t.$ws.find('tbody tr');
-                expect($tr.length).toEqual(1);
-                expect($tr.text()).toEqual('No requests');
+                expect($tr.length).toEqual(0);
             };
 
             /**
@@ -49,9 +48,9 @@
                 var $tr = t.$ws.find('tbody tr');
                 for (var i = rows.length - 1; i >= 0; i--) {
                     var $td = $( $tr[i]).find('td');
-                    expect( $( $td[0] ).text() ).toEqual(rows[i].method);
-                    expect( $( $td[1] ).text() ).toEqual(rows[i].url);
-                    expect( $( $td[2] ).text() ).toEqual(rows[i].data || '');
+                    expect( $( $td[1] ).text() ).toEqual(rows[i].method);
+                    expect( $( $td[2] ).text() ).toEqual(rows[i].url);
+                    expect( $( $td[3] ).text() ).toEqual(rows[i].data || '');
                 }
             };
         });
@@ -66,15 +65,15 @@
         it('can be startered and stopped', function () {
             this.expectNoRequests();
             $.ajax(testRequest404);
-            this.sc.render();
+            this.clock.tick(1200);
             this.expectNoRequests();
             this.sc.start();
             $.ajax(testRequest1);
-            this.sc.render();
+            this.clock.tick(1200);
             this.expectRows([testRequest1]);
             this.sc.stop();
             $.ajax(testRequest404);
-            this.sc.render();
+            this.clock.tick(1200);
             this.expectRows([testRequest1]);
         });
 
@@ -83,10 +82,10 @@
             this.expectNoRequests();
             this.sc.start();
             $.ajax(testRequest1);
-            this.sc.render();
+            this.clock.tick(1200);
             this.expectRows([testRequest1]);
             $.ajax(testRequest2);
-            this.sc.render();
+            this.clock.tick(1200);
             this.expectRows([testRequest1, testRequest2]);
             this.sc.stop();
         });
@@ -97,7 +96,7 @@
             this.sc.start();
             var callback = sinon.spy();
             $.ajax($.extend(testRequest1, { success: callback }));
-            this.sc.render();
+            this.clock.tick(1200);
             this.$ta.val('{ "id": 1 }');
             this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
@@ -111,7 +110,7 @@
             this.sc.start();
             var callback = sinon.spy();
             $.ajax($.extend(testRequest1, { error: callback }));
-            this.sc.render();
+            this.clock.tick(1200);
             this.$sel.val(400);
             this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
@@ -127,7 +126,7 @@
             var callback = sinon.spy();
             $.ajax($.extend(testRequest1, { success: callback }));
             $.ajax($.extend(testRequest2, { success: callback }));
-            this.sc.render();
+            this.clock.tick(1200);
             this.$ta.val('{ "id": 1 }');
             this.$btn.click();
             expect(callback.calledOnce).toBeTruthy();
@@ -146,7 +145,7 @@
             this.expectNoRequests();
             this.$ta.val('test text');
             this.$sel.val(400);
-            this.sc.render();
+            this.clock.tick(1200);
             expect(this.$ta.val()).toBe('test text');
             expect(this.$sel.val()).toBe('400');
         });
