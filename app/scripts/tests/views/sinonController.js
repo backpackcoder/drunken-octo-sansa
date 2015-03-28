@@ -116,17 +116,18 @@
 
             // 200, request, empty text
             this.$sel.val(200).trigger('change');
-            expect(this.$btn.prop('disabled')).toBeTruthy();
-
-            // 200, request, valid text
-            this.$ta.val('{ "id"  : 1}').trigger('keyup');
-            expect(this.$ta.hasClass('error')).toBeFalsy();
+            this.$ta.text('   ');
             expect(this.$btn.prop('disabled')).toBeFalsy();
 
             // 200, request, invalid text
             this.$ta.val(' : 1}').trigger('keyup');
             expect(this.$ta.hasClass('error')).toBeTruthy();
             expect(this.$btn.prop('disabled')).toBeTruthy();
+
+            // 200, request, valid text
+            this.$ta.val('{ "id"  : 1}').trigger('keyup');
+            expect(this.$ta.hasClass('error')).toBeFalsy();
+            expect(this.$btn.prop('disabled')).toBeFalsy();
         });
     });
 })();
