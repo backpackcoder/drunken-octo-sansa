@@ -37,9 +37,12 @@ function SinonController(config) {
      * @private
      */
     function _updateSendButtonState() {
+        var jsonStr = _jsonTextArea.val();
         if ('200' === _statusSelect.val()) {
             try {
-                JSON.parse( _jsonTextArea.val() );
+                if ( '' !== $.trim(jsonStr) ) {
+                    JSON.parse(jsonStr);
+                }
                 _jsonTextArea.removeClass('error');
             }
             catch (e) {

@@ -46,21 +46,20 @@ html, body { width: 100%; height: 100%; overflow-x: hidden; }
     border-bottom: 1px solid #2f2f1c;
 }
 
-.ui-sinon td:nth-child(1).no-requests {
-    width: 500px;
-
+.ui-sinon td:nth-child(1), .ui-sinon th:nth-child(1) {
+    display: none;
 }
 
-.ui-sinon td:nth-child(1), .ui-sinon th:nth-child(1)  {
+.ui-sinon td:nth-child(2), .ui-sinon th:nth-child(2)  {
     width: 100px;
     text-align: center;
 }
 
-.ui-sinon td:nth-child(2), .ui-sinon th:nth-child(2)  {
+.ui-sinon td:nth-child(3), .ui-sinon th:nth-child(3)  {
     width: 200px;
 }
 
-.ui-sinon td:nth-child(3), .ui-sinon th:nth-child(3)  {
+.ui-sinon td:nth-child(4), .ui-sinon th:nth-child(4)  {
     width: 200px;
 }
 
