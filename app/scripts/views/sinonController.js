@@ -35,7 +35,7 @@ function SinonController(config) {
         if (el.addEventListener) {
             el.addEventListener(eventName, handler);
         } else {
-            el.attachEvent('on' + eventName, function(){
+            el.attachEvent('on' + eventName, function () {
                 handler.call(el);
             });
         }
@@ -75,7 +75,7 @@ function SinonController(config) {
         var jsonStr = _jsonTextArea.value;
         if ('200' === _statusSelect.value) {
             try {
-                if ( '' !== jsonStr.trim() ) {
+                if ('' !== jsonStr.trim()) {
                     JSON.parse(jsonStr);
                 }
                 $removeClass(_jsonTextArea, 'error');
@@ -86,8 +86,8 @@ function SinonController(config) {
         }
 
 
-        if ( ! _requestTable.hasRows() ||
-            ($hasClass(_jsonTextArea, 'error') && ('200' === _statusSelect.value) ) ) {
+        if (!_requestTable.hasRows() ||
+            ($hasClass(_jsonTextArea, 'error') && ('200' === _statusSelect.value) )) {
             _sendButton.setAttribute('disabled', 'disabled');
         } else {
             _sendButton.removeAttribute('disabled');
@@ -107,9 +107,9 @@ function SinonController(config) {
         }
 
         _poller = window.setInterval(function () {
-            for(var i=0; i < _server.requests.length; i++) {
+            for (var i = 0; i < _server.requests.length; i++) {
                 var req = _server.requests[i];
-                if ((4 !== req.readyState) &&  (_addedRequests.indexOf(i) === -1)) {
+                if ((4 !== req.readyState) && (_addedRequests.indexOf(i) === -1)) {
                     _requestTable.pushRow([
                         i.toString(),
                         req.method,
@@ -119,7 +119,8 @@ function SinonController(config) {
                 }
             }
             _updateSendButtonState();
-        }, 1000); /* setInterval */
+        }, 1000);
+        /* setInterval */
         return t;
     };
 
@@ -155,16 +156,18 @@ function SinonController(config) {
         t.el.innerHTML = Templates.sinonController;
 
         _sendButton = t.el.querySelector('button');
-        $addEventListener(_sendButton, 'click', function(ev) {
-                ev.preventDefault();
-                _requestTable.popRow(function(row){
-                    _server.requests[row[0]].respond(
-                        parseInt(_statusSelect.value),
-                        { 'Content-Type': 'application/json' },
-                        _jsonTextArea.value);
-                }); /* popRow */
-                _updateSendButtonState();
-            }); /* on click */
+        $addEventListener(_sendButton, 'click', function (ev) {
+            ev.preventDefault();
+            _requestTable.popRow(function (row) {
+                _server.requests[row[0]].respond(
+                    parseInt(_statusSelect.value),
+                    { 'Content-Type': 'application/json' },
+                    _jsonTextArea.value);
+            });
+            /* popRow */
+            _updateSendButtonState();
+        });
+        /* on click */
 
         _jsonTextArea = t.el.querySelector('textarea');
         $addEventListener(_jsonTextArea, 'keyup', _updateSendButtonState);
@@ -173,12 +176,13 @@ function SinonController(config) {
         $addEventListener(_statusSelect, 'change', _updateSendButtonState);
 
         _requestTable = new Table({
-            el : t.el.querySelector('.requests'),
-            name : 'Requests',
-            fields : ['id', 'Method', 'Url', 'Body']
+            el: t.el.querySelector('.requests'),
+            name: 'Requests',
+            fields: ['id', 'Method', 'Url', 'Body']
         }).render();
 
         _updateSendButtonState();
         return t;
-    }; /* render */
+    };
+    /* render */
 }

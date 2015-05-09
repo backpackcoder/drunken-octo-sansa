@@ -26,7 +26,7 @@
             var request = new XMLHttpRequest();
             request.open(req.method, req.url, true);
 
-            request.onload = function() {
+            request.onload = function () {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
                     if (successFn) {
@@ -39,7 +39,7 @@
                 }
             };
 
-            request.onerror = function() {
+            request.onerror = function () {
                 errorFn(request, request.statusText, request.status);
             };
             request.setRequestHeader('Content-Type', 'application/json');
@@ -57,14 +57,14 @@
         beforeEach(function () {
             var t = this;
             this.sc = new SinonController({
-                el : document.createElement('div')
+                el: document.createElement('div')
             }).render();
             this.$ws = this.sc.el;
             this.clock = sinon.useFakeTimers();
             this.$ta = this.$ws.querySelector('textarea');
             this.$sel = this.$ws.querySelector('select[name="statusCode"]');
             this.$btn = this.$ws.querySelector('button');
-            
+
             /**
              * Expects "No Requests" text in the table
              */
@@ -97,6 +97,7 @@
 
         it('can be started and stopped', function () {
             var t = this;
+
             function _sendAndExpect(request, rows) {
                 $ajax(request);
                 t.clock.tick(1100);
@@ -133,9 +134,10 @@
         });
 
 
-        it('should disable/enable send response button', function(){
+        it('should disable/enable send response button', function () {
             this.sc.start();
             var t = this, event = null;
+
             function _setFormValues(status, body) {
                 if (status) {
                     t.$sel.vale = status;
@@ -162,17 +164,17 @@
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
 
             // 200, request, empty text
-            _setFormValues(200,'   ');
+            _setFormValues(200, '   ');
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
 
             // 200, request, invalid text
-            _setFormValues(200,'{ "id": 1');
-            expect($hasClass(this.$ta,'error')).toBeTruthy();
+            _setFormValues(200, '{ "id": 1');
+            expect($hasClass(this.$ta, 'error')).toBeTruthy();
             expect(this.$btn.getAttribute('disabled')).toBeTruthy();
 
             // 200, request, valid text
-            _setFormValues(200,'{ "id": 1 }');
-            expect($hasClass(this.$ta,'error')).toBeFalsy();
+            _setFormValues(200, '{ "id": 1 }');
+            expect($hasClass(this.$ta, 'error')).toBeFalsy();
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
         });
     });

@@ -8,7 +8,7 @@ function addEventListener(el, eventName, handler) {
     if (el.addEventListener) {
         el.addEventListener(eventName, handler);
     } else {
-        el.attachEvent('on' + eventName, function(){
+        el.attachEvent('on' + eventName, function () {
             handler.call(el);
         });
     }
@@ -27,11 +27,11 @@ addEventListener(formEl, 'submit', function (ev) {
     var request = new XMLHttpRequest();
     request.open(method, url, true);
 
-    request.onreadystatechange = function() {
+    request.onreadystatechange = function () {
         if (this.readyState === 4) {
             var tbodyEl = document.querySelector('#tblResponse tbody');
             var firstRow = tbodyEl.querySelectorAll('tr')[0];
-            if ( 'No Responses' === firstRow.innerText.trim() ) {
+            if ('No Responses' === firstRow.innerText.trim()) {
                 tbodyEl.removeChild(firstRow);
             }
             tbodyEl.innerHTML += '<tr class="' + this.statusText + '"><td style="text-align: center">' + this.status + '</td><td>' + this.responseText + '</td></tr>';

@@ -41,8 +41,7 @@ function Table(config) {
     function _makeRow(values, header) {
         var html = '<tr>';
         var tag = header ? 'th' : 'td';
-        for(var i=0; i < values.length; i++)
-        {
+        for (var i = 0; i < values.length; i++) {
             html += '<' + tag + '>' + (values[i] || '') + '</' + tag + '>';
         }
         html += '</tr>';
@@ -54,11 +53,10 @@ function Table(config) {
      * Adds a row to the bottom of the table
      * @param values {Array}
      */
-    t.pushRow = function(values) {
+    t.pushRow = function (values) {
         t._bodyEl.innerHTML += _makeRow(values);
         return t;
     };
-
 
 
     /**
@@ -66,14 +64,14 @@ function Table(config) {
      * @param processRowFunction {function} called after
      * row is removed with the row passed as argument
      */
-    t.popRow = function(processRowFunction) {
+    t.popRow = function (processRowFunction) {
         var row = [];
         var trEls = t.el.querySelectorAll('tbody tr');
         if (trEls.length === 0) {
             processRowFunction(null);
         } else {
             var tds = trEls[0].querySelectorAll('td');
-            for (var i=0; i < tds.length; i++) {
+            for (var i = 0; i < tds.length; i++) {
                 row.push(tds[i].innerText);
             }
             t._bodyEl.removeChild(trEls[0]);
@@ -87,7 +85,7 @@ function Table(config) {
      * Are there rows in the table
      * @returns {boolean}
      */
-    t.hasRows = function() {
+    t.hasRows = function () {
         return t.el.querySelectorAll('tbody tr').length !== 0;
     };
 
@@ -97,9 +95,9 @@ function Table(config) {
      * @returns {Table}
      */
     t.render = function () {
-        var html = '<table><caption>' + (_name || '') +  '</caption>' +
-                   '<thead>' + _makeRow( _fields, true) + '</thead>' +
-                   '<tbody></tbody></table>';
+        var html = '<table><caption>' + (_name || '') + '</caption>' +
+            '<thead>' + _makeRow(_fields, true) + '</thead>' +
+            '<tbody></tbody></table>';
         t.el.innerHTML = html;
         t._bodyEl = t.el.querySelector('tbody');
         return t;
