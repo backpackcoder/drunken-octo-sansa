@@ -2,17 +2,16 @@
 <html class="no-js">
 <head>
     <meta charset="utf-8">
-    <title>drunken-octo-sansa</title>
+    <title>Example - drunken-octo-sansa</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/favicon.ico">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css(.tmp) styles/main.css -->
+    <!-- build:css(.tmp) styles/index.css -->
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-    <!-- todo: figure out why we need jasmine.css on this page and try to remove -->
-    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/sinonController.css">
     <!-- endbuild -->
 </head>
 <body>
@@ -23,11 +22,11 @@
     <div class="row-fluid navbar">
         <div class="brand">drunken-octo-sansa</div>
         <ul class="nav pull-right">
+            <li class="active">
+                <a href="index.html">Example</a>
+            </li>
             <li>
                 <a href="test.html">Unit Tests</a>
-            </li>
-            <li class="active">
-                <a href="index.html#SinonController">SinonController</a>
             </li>
         </ul>
     </div>
@@ -36,7 +35,8 @@
             <form id="formRequest" class="form-inline">
                 <fieldset>
                     <legend>Send AJAX request via $.ajax(url)</legend>
-                    <textarea class="input-block-level" placeholder="enter request body" name="requestBody" style="margin-bottom: 4px; height: 90px;"></textarea>
+                    <textarea class="input-block-level" placeholder="enter request body" name="requestBody"
+                              style="margin-bottom: 4px; height: 90px;"></textarea>
                     <select name="method" class="span2">
                         <option value="GET" selected="selected">GET</option>
                         <option value="POST">POST</option>
@@ -51,15 +51,15 @@
             <div>
                 <table id="tblResponse" class="table table-hover table-striped">
                     <thead>
-                        <tr>
-                            <th style="text-align: center;" class="span4">Status</th>
-                            <th class="span8">Body</th>
-                        </tr>
+                    <tr>
+                        <th style="text-align: center;" class="span4">Status</th>
+                        <th class="span8">Body</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="2" style="text-align: center;">No Responses</td>
-                        </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">No Responses</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -70,32 +70,13 @@
         </div>
     </div>
 
-</div> <!-- main div -->
+</div>
 
-<!-- build:js(.) scripts/vendor.js -->
-<!-- bower:js -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/bootstrap/docs/assets/js/bootstrap.js"></script>
-<script src="bower_components/json2/json2.js"></script>
-<script src="bower_components/underscore/underscore.js"></script>
-<!-- endbower -->
-<!-- endbuild -->
-
-<!-- This needs to be separate from vendor.js or sinon doesn't define itstelf correctly -->
-<!-- build:js({app,.tmp}) scripts/sinon.js -->
-<!-- endbuild -->
-
-
-<!-- build:js({app,.tmp}) scripts/drunkenOctoSansa.js -->
+<!-- build:js({app,.tmp}) scripts/index.js -->
 <script src="scripts/sinon-1.10.3.js"></script>
-<script src="bower_components/sinon-ie/sinon-ie.js"></script>
 <script src="scripts/templates.js"></script>
 <script src="scripts/views/table.js"></script>
 <script src="scripts/views/sinonController.js"></script>
-<!-- endbuild -->
-
-
-<!-- build:js({app,.tmp}) scripts/main.js -->
 <script src="scripts/writeBanner.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->

@@ -1,4 +1,4 @@
-/* global describe, it, expect, sinon, $, Table */
+/* global describe, it, expect, sinon, Table */
 'use strict';
 
 (function () {
@@ -9,10 +9,9 @@
          * @returns {Table}
          */
         function getTable(config) {
-            return new Table($.extend(
-                config,
-                { el : '<div></div>' }
-            ));
+            config = config || {};
+            config.el = document.createElement('div');
+            return new Table(config);
         }
 
         // Test data
@@ -29,7 +28,7 @@
             config : {
                 name : null, fields: []
             },
-            heaers : [],
+            headers : [],
             caption : ''
         };
 
@@ -40,43 +39,49 @@
 
         it('should render the fields as headers', function () {
             var tbl = getTable(data1.config).render();
-            var $th = tbl.$el.find('th');
-            expect($th.length).toBe(data1.config.fields.length);
-            $th.each(function(idx, el) {
-                expect($(el).text()).toBe(data1.headers[idx]);
-            });
+            var thEl = tbl.el.querySelectorAll('th');
+            expect(thEl.length).toBe(data1.config.fields.length);
+            for(var i=0; i < thEl.length; i++) {
+                expect(thEl[i].innerText).toBe(data1.headers[i]);
+            }
         });
 
 
         it('should render name in the caption', function(){
             var tbl = getTable(data1.config).render();
-            var $caption = tbl.$el.find('caption');
-            expect($caption.text()).toBe(data1.config.name);
+            var captionEl = tbl.el.querySelector('caption');
+            expect(captionEl.innerText).toBe(data1.config.name);
 
             tbl = getTable(data2.config).render();
-            $caption = tbl.$el.find('caption');
-            expect($caption.text()).toBe('');
+            captionEl = tbl.el.querySelector('caption');
+            expect(captionEl.innerText).toBe('');
         });
 
 
         it('should push a row to the bottom of the table', function(){
             var tbl = getTable(data1.config).render();
 
-            var $tr = tbl.$el.find('tbody tr');
-            expect($tr.length).toBe(0);
+            var trEls = tbl.el.querySelectorAll('tbody tr');
+            expect(trEls.length).toBe(0);
             tbl.pushRow(row1);
-            $tr = tbl.$el.find('tbody tr');
-            expect($tr.length).toBe(1);
-            $tr.find('td').each(function(idx, el) {
-                expect($(el).text()).toBe(row1[idx]);
-            });
+            trEls= tbl.el.querySelectorAll('tbody tr');
+            expect(trEls.length).toBe(1);
+            var tdEls = trEls[0].querySelectorAll('td');
+            for(var i=0; i <tdEls.length; i++) {
+                expect(tdEls[i].innerText).toBe(row1[i]);
+            }
 
             tbl.pushRow(row2);
-            $tr = tbl.$el.find('tbody tr');
-            expect($tr.length).toBe(2);
-            $tr.first().find('td').each(function(idx, el) {
-                expect($(el).text()).toBe(row1[idx]);
-            });
+            trEls = tbl.el.querySelectorAll('tbody tr');
+            expect(trEls.length).toBe(2);
+            tdEls = trEls[0].querySelectorAll('td');
+            for(i=0; i <tdEls.length; i++) {
+                expect(tdEls[i].innerText).toBe(row1[i]);
+            }
+            tdEls = trEls[1].querySelectorAll('td');
+            for(i=0; i <tdEls.length; i++) {
+                expect(tdEls[i].innerText).toBe(row2[i]);
+            }
         });
 
 
@@ -89,8 +94,8 @@
             tbl.pushRow(row1);
             callback = sinon.spy();
             tbl.popRow(callback);
-            var $tr = tbl.$el.find('tbody tr');
-            expect($tr.length).toBe(0);
+            var trEls = tbl.el.querySelectorAll('tbody tr');
+            expect(trEls.length).toBe(0);
             expect(callback.calledWith(row1)).toBeTruthy();
         });
 

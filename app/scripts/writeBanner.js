@@ -1,4 +1,3 @@
-/* global $ */
 'use strict';
 // This file writes out the browser banner
 
@@ -32,6 +31,6 @@ var browserClass = (function (browser) {
     }
 })(browserStr);
 
-$('#divBrowser')
-    .text(browserStr.replace('MSIE', 'Internet Explorer') + ' - ' + navigator.userAgent)
-    .addClass(browserClass);
+var barEl = document.getElementById('divBrowser');
+barEl.classList.add(browserClass);
+barEl.innerText = browserStr.replace('MSIE', 'Internet Explorer') + ' - ' + navigator.userAgent;
