@@ -1,4 +1,3 @@
-/* global $ */
 /* exported Table */
 'use strict';
 
@@ -13,9 +12,9 @@ function Table(config) {
 
     /**
      * The Table will be appended to this element
-     * @type {*|jQuery|HTMLElement}
+     * @type {HTMLElement}
      */
-    t.$el = $(config.el);
+    t.el = config.el;
 
 
     /**
@@ -36,18 +35,18 @@ function Table(config) {
      * Create a rows for the table
      * @param values {Array} The cell values
      * @param header {boolean} true if header <th>
-     * @returns {*|jQuery|HTMLElement} the <tr>
+     * @returns {*HTMLElement} the <tr>
      * @private
      */
     function _makeRow(values, header) {
-        var $tr = $('<tr/>');
+        var html = '<tr>';
+        var tag = header ? 'th' : 'td';
         for(var i=0; i < values.length; i++)
         {
-            $tr.append(
-                $( header ? '<th/>' : '<td/>' )
-                    .text( values[i] || '' ) );
+            html += '<' + tag + '>' + (values[i] || '') + '</' + tag + '>';
         }
-        return $tr;
+        html += '</tr>';
+        return html;
     }
 
 
@@ -56,7 +55,7 @@ function Table(config) {
      * @param values {Array}
      */
     t.pushRow = function(values) {
-        t.$body.append( _makeRow(values) );
+        t._bodyEl.innerHTML += _makeRow(values);
         return t;
     };
 
@@ -69,17 +68,17 @@ function Table(config) {
      */
     t.popRow = function(processRowFunction) {
         var row = [];
-        var $tr = t.$el.find('tbody tr').first();
-        if ($tr.length === 0) {
+        var trEls = t.el.querySelectorAll('tbody tr');
+        if (trEls.length === 0) {
             processRowFunction(null);
         } else {
-
-            $tr.find('td').each(function() {
-                row.push( $(this).text() );
-            });
+            var tds = trEls[0].querySelectorAll('td');
+            for (var i=0; i < tds.length; i++) {
+                row.push(tds[i].innerText);
+            }
+            t._bodyEl.removeChild(trEls[0]);
             processRowFunction(row);
         }
-        $tr.remove();
         return this;
     };
 
@@ -89,7 +88,7 @@ function Table(config) {
      * @returns {boolean}
      */
     t.hasRows = function() {
-        return t.$body.find('tr').length !== 0;
+        return t.el.querySelectorAll('tbody tr').length !== 0;
     };
 
 
@@ -98,12 +97,11 @@ function Table(config) {
      * @returns {Table}
      */
     t.render = function () {
-        t.$body = $('<tbody/>');
-        t.$el.append( $('<table/>') )
-            .append( $('<caption/>').text( _name || '' ))
-            .append( $('<thead/>')
-                .append( _makeRow( _fields, true) ))
-            .append(t.$body);
+        var html = '<table><caption>' + (_name || '') +  '</caption>' +
+                   '<thead>' + _makeRow( _fields, true) + '</thead>' +
+                   '<tbody></tbody></table>';
+        t.el.innerHTML = html;
+        t._bodyEl = t.el.querySelector('tbody');
         return t;
     };
 }

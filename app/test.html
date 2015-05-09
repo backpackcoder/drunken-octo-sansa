@@ -1,69 +1,53 @@
 <!doctype html>
 <html class="no-js">
-  <head>
+<head>
     <meta charset="utf-8">
-    <title>drunken-octo-sansa</title>
+    <title>Unit Tests - drunken-octo-sansa</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/favicon.ico">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css(.tmp) styles/main.css -->
+    <!-- build:css(.tmp) styles/test.css -->
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/jasmine.css">
+    <link rel="stylesheet" href="styles/test.css">
     <!-- endbuild -->
-  </head>
-  <body>
-    <div class="container-fluid">
-        <div id="divBrowser" class="alert text-center">
-            &nbsp;
-        </div>
-        <div class="row-fluid navbar">
-            <div class="brand">drunken-octo-sansa</div>
-            <ul class="nav">
+</head>
+<body>
+<div class="container-fluid">
+    <div id="divBrowser" class="alert text-center">
+        &nbsp;
+    </div>
+    <div class="row-fluid navbar">
+        <div class="brand">drunken-octo-sansa</div>
+        <ul class="nav">
 
-            </ul>
-            <ul class="nav pull-right">
-                <li class="active">
-                    <a href="#unitTests">Unit Tests</a>
-                </li>
-                <li>
-                    <a href="index.html#SinonController">SinonController</a>
-                </li>
-            </ul>
-        </div>
-        <div id="unitTests"></div>
-    </div> <!-- main div -->
+        </ul>
+        <ul class="nav pull-right">
+            <li>
+                <a href="index.html">Example</a>
+            </li>
+            <li class="active">
+                <a href="test.html">Unit Tests</a>
+            </li>
+        </ul>
+    </div>
+    <div id="unitTests"></div>
+</div>
 
-    <!-- build:js(.) scripts/testVendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/bootstrap/docs/assets/js/bootstrap.js"></script>
-    <script src="bower_components/json2/json2.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
-    <!-- endbower -->
-    <script src="bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
-    <script src="bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
-    <!-- endbuild -->
-
-    <!-- build:js({app,.tmp}) scripts/testSources.js -->
-    <script src="scripts/sinon-1.10.3.js"></script>
-    <script src="bower_components/sinon-ie/sinon-ie.js"></script>
-
-    <script src="scripts/templates.js"></script>
-    <script src="scripts/views/table.js"></script>
-    <script src="scripts/views/sinonController.js"></script>
-    <!-- endbuild -->
-
-    <!-- build:js({app,.tmp}) scripts/drunkenOctoSansaTests.js -->
-    <script src="scripts/tests/views/table.js"></script>
-    <script src="scripts/tests/views/sinonController.js"></script>
-    <!-- endbuild -->
-
-    <!-- build:js({app,.tmp}) scripts/testsMain.js -->
-    <script src="scripts/writeBanner.js"></script>
-    <script src="scripts/testsMain.js"></script>
-    <!-- endbuild -->
+<!-- build:js({.,app}) scripts/test.js -->
+<script src="bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+<script src="bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+<script src="scripts/sinon-1.10.3.js"></script>
+<script src="scripts/templates.js"></script>
+<script src="scripts/views/table.js"></script>
+<script src="scripts/views/sinonController.js"></script>
+<script src="scripts/tests/views/table.js"></script>
+<script src="scripts/tests/views/sinonController.js"></script>
+<script src="scripts/writeBanner.js"></script>
+<script src="scripts/testsMain.js"></script>
+<!-- endbuild -->
 </body>
 </html>
