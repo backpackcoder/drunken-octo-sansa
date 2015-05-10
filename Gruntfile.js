@@ -159,6 +159,7 @@ module.exports = function (grunt) {
         jasmine: {
             all: {
                 src: [
+                    '<%= config.app %>/scripts/core.js',
                     '<%= config.app %>/scripts/templates.js',
                     '<%= config.app %>/scripts/views/{,*/}*.js'
                 ],

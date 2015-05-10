@@ -22,6 +22,6 @@ jasmineEnv.specFilter = function (spec) {
 };
 jasmineEnv.execute();
 var testEl = document.getElementById('unitTests');
-var unknownEl = testEl.appendChild(
+var reportEl = testEl.appendChild(
     document.querySelector('.jasmine_reporter'));
-unknownEl.style.display = 'block';
+reportEl.style.display = 'block';

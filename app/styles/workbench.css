@@ -1,0 +1,9 @@
+.ui-codeedit textarea {
+    height: 100px;
+    width: 90%;
+}
+
+.ui-codeedit button {
+    float: right;
+    margin-right: 7%;
+}
