@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, afterEach, expect, sinon, SinonController */
+/* global describe, it, beforeEach, afterEach, expect, sinon, SinonController, hasClass */
 'use strict';
 
 (function () {
@@ -44,14 +44,6 @@
             };
             request.setRequestHeader('Content-Type', 'application/json');
             request.send(req.data);
-        }
-
-        function $hasClass(el, className) {
-            if (el.classList) {
-                return el.classList.contains(className);
-            } else {
-                return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-            }
         }
 
         beforeEach(function () {
@@ -169,12 +161,12 @@
 
             // 200, request, invalid text
             _setFormValues(200, '{ "id": 1');
-            expect($hasClass(this.$ta, 'error')).toBeTruthy();
+            expect(hasClass(this.$ta, 'error')).toBeTruthy();
             expect(this.$btn.getAttribute('disabled')).toBeTruthy();
 
             // 200, request, valid text
             _setFormValues(200, '{ "id": 1 }');
-            expect($hasClass(this.$ta, 'error')).toBeFalsy();
+            expect(hasClass(this.$ta, 'error')).toBeFalsy();
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
         });
     });

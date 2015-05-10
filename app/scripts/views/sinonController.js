@@ -1,4 +1,4 @@
-/* global Templates, sinon, Table */
+/* global Templates, sinon, Table, addClass, removeClass, hasClass */
 /* exported SinonController */
 'use strict';
 
@@ -6,41 +6,6 @@
  * A view to allow a user to interact with a sinon.fakeServer
  */
 function SinonController(config) {
-    // Helper functions
-    function $addClass(el, className) {
-        if (el.classList) {
-            el.classList.add(className);
-        } else {
-            el.className += ' ' + className;
-        }
-    }
-
-    function $removeClass(el, className) {
-        if (el.classList) {
-            el.classList.remove(className);
-        } else {
-            el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-        }
-    }
-
-    function $hasClass(el, className) {
-        if (el.classList) {
-            return el.classList.contains(className);
-        } else {
-            return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-        }
-    }
-
-    function $addEventListener(el, eventName, handler) {
-        if (el.addEventListener) {
-            el.addEventListener(eventName, handler);
-        } else {
-            el.attachEvent('on' + eventName, function () {
-                handler.call(el);
-            });
-        }
-    }
-
     var t = this;
 
     /* the root HTML element */
@@ -78,16 +43,16 @@ function SinonController(config) {
                 if ('' !== jsonStr.trim()) {
                     JSON.parse(jsonStr);
                 }
-                $removeClass(_jsonTextArea, 'error');
+                removeClass(_jsonTextArea, 'error');
             }
             catch (e) {
-                $addClass(_jsonTextArea, 'error');
+                addClass(_jsonTextArea, 'error');
             }
         }
 
 
         if (!_requestTable.hasRows() ||
-            ($hasClass(_jsonTextArea, 'error') && ('200' === _statusSelect.value) )) {
+            (hasClass(_jsonTextArea, 'error') && ('200' === _statusSelect.value) )) {
             _sendButton.setAttribute('disabled', 'disabled');
         } else {
             _sendButton.removeAttribute('disabled');
@@ -156,7 +121,7 @@ function SinonController(config) {
         t.el.innerHTML = Templates.sinonController;
 
         _sendButton = t.el.querySelector('button');
-        $addEventListener(_sendButton, 'click', function (ev) {
+        addEventListener(_sendButton, 'click', function (ev) {
             ev.preventDefault();
             _requestTable.popRow(function (row) {
                 _server.requests[row[0]].respond(
@@ -170,10 +135,10 @@ function SinonController(config) {
         /* on click */
 
         _jsonTextArea = t.el.querySelector('textarea');
-        $addEventListener(_jsonTextArea, 'keyup', _updateSendButtonState);
+        addEventListener(_jsonTextArea, 'keyup', _updateSendButtonState);
 
         _statusSelect = t.el.querySelector('select[name="statusCode"]');
-        $addEventListener(_statusSelect, 'change', _updateSendButtonState);
+        addEventListener(_statusSelect, 'change', _updateSendButtonState);
 
         _requestTable = new Table({
             el: t.el.querySelector('.requests'),
