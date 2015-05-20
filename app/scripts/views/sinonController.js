@@ -1,4 +1,4 @@
-/* global Templates, sinon, Table, addClass, removeClass, hasClass */
+/* global Templates, sinon, Table, addClass, removeClass, hasClass, dos */
 /* exported SinonController */
 'use strict';
 
@@ -29,15 +29,30 @@ function SinonController(config) {
     /* The Button for sending the response */
     var _sendButton = null;
 
+    /* The button for saving the response */
+    var _saveResponseButton = null;
+
+    /* The saved response count label */
+    var _countLabel = null;
+
     /* The request table */
     var _requestTable = null;
 
+
     /**
-     * Validates control and updates the send button
+     * Updates the button states and response count label
      * @private
      */
-    function _updateSendButtonState() {
+    function _update() {
+        // Validate the body json
         var jsonStr = _jsonTextArea.value;
+        if (jsonStr || jsonStr.trim() !== '') {
+            _saveResponseButton.removeAttribute('disabled');
+        } else {
+            _saveResponseButton.setAttribute('disabled', 'disabled');
+        }
+
+        // Validate status
         if ('200' === _statusSelect.value) {
             try {
                 if ('' !== jsonStr.trim()) {
@@ -50,12 +65,20 @@ function SinonController(config) {
             }
         }
 
-
+        // Validate requests exist
         if (!_requestTable.hasRows() ||
             (hasClass(_jsonTextArea, 'error') && ('200' === _statusSelect.value) )) {
             _sendButton.setAttribute('disabled', 'disabled');
         } else {
             _sendButton.removeAttribute('disabled');
+        }
+
+        // Update response count
+        try {
+            _countLabel.innerText = dos.dataStore.counts();
+        } catch (exp) {
+            console.log(exp);
+            _countLabel.innerText = '0/0';
         }
     }
 
@@ -83,7 +106,7 @@ function SinonController(config) {
                     _addedRequests.push(i);
                 }
             }
-            _updateSendButtonState();
+            _update();
         }, 1000);
         /* setInterval */
         return t;
@@ -117,10 +140,11 @@ function SinonController(config) {
      * Renders the HTML
      * @returns {SinonController}
      */
-    t.render = function () {
+    t.create = function () {
         t.el.innerHTML = Templates.sinonController;
+        _countLabel = t.el.querySelector('span.count-response');
 
-        _sendButton = t.el.querySelector('button');
+        _sendButton = t.el.querySelector('button[type="submit"]');
         addEventListener(_sendButton, 'click', function (ev) {
             ev.preventDefault();
             _requestTable.popRow(function (row) {
@@ -129,24 +153,50 @@ function SinonController(config) {
                     { 'Content-Type': 'application/json' },
                     _jsonTextArea.value);
             });
-            /* popRow */
-            _updateSendButtonState();
+            _update();
         });
-        /* on click */
+
+        _saveResponseButton = t.el.querySelector('button.save-response');
+        addEventListener(_saveResponseButton, 'click', function (ev) {
+            ev.preventDefault();
+            dos.dataStore.add(_jsonTextArea.value);
+            _update();
+        });
+
+        var nextResponseButton = t.el.querySelector('button.next-response');
+        addEventListener(nextResponseButton, 'click', function (ev) {
+            ev.preventDefault();
+            _jsonTextArea.value = dos.dataStore.next();
+            _update();
+        });
+
+        var prevResponseButton = t.el.querySelector('button.prev-response');
+        addEventListener(prevResponseButton, 'click', function (ev) {
+            ev.preventDefault();
+            _jsonTextArea.value = dos.dataStore.prev();
+            _update();
+        });
+
+        var clearResponseButton = t.el.querySelector('button.clear-response');
+        addEventListener(clearResponseButton, 'click', function (ev) {
+            ev.preventDefault();
+            dos.dataStore.clear();
+            _update();
+        });
 
         _jsonTextArea = t.el.querySelector('textarea');
-        addEventListener(_jsonTextArea, 'keyup', _updateSendButtonState);
+        addEventListener(_jsonTextArea, 'keyup', _update);
 
         _statusSelect = t.el.querySelector('select[name="statusCode"]');
-        addEventListener(_statusSelect, 'change', _updateSendButtonState);
+        addEventListener(_statusSelect, 'change', _update);
 
         _requestTable = new Table({
             el: t.el.querySelector('.requests'),
             name: 'Requests',
             fields: ['id', 'Method', 'Url', 'Body']
-        }).render();
+        }).create();
 
-        _updateSendButtonState();
+        _update();
         return t;
     };
     /* render */

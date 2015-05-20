@@ -4,6 +4,14 @@
     <form class="response">
         <legend>Response</legend>
         <textarea name="responseBody" placeholder="enter json response"></textarea>
+        <div>
+            <button type="button" class="save-response">Save Response</button>
+            <button type="button" class="next-response">Load Next Response</button>
+            <button type="button" class="prev-response">Load Previous Response</button>
+            <button type="button" class="clear-response">Clear Responses</button>
+            <span class="count-response">?/?</span>
+        </div>
+
         <select name="statusCode">
             <option value="200" selected="selected">200 OK</option>
             <option value="400">400 Bad Request</option>

@@ -50,12 +50,17 @@
             var t = this;
             this.sc = new SinonController({
                 el: document.createElement('div')
-            }).render();
+            }).create();
             this.$ws = this.sc.el;
             this.clock = sinon.useFakeTimers();
             this.$ta = this.$ws.querySelector('textarea');
             this.$sel = this.$ws.querySelector('select[name="statusCode"]');
-            this.$btn = this.$ws.querySelector('button');
+            this.$btn = this.$ws.querySelector('button[type="submit"]');
+            this.$btnSave = this.$ws.querySelector('button.save-response');
+            this.$btnNext = this.$ws.querySelector('button.next-response');
+            this.$btnPrev = this.$ws.querySelector('button.prev-response');
+            this.$btnClear = this.$ws.querySelector('button.clear-response');
+            this.spanCounts = this.$ws.querySelector('span.count-response');
 
             /**
              * Expects "No Requests" text in the table
@@ -130,44 +135,116 @@
             this.sc.start();
             var t = this, event = null;
 
-            function _setFormValues(status, body) {
-                if (status) {
-                    t.$sel.vale = status;
-                    event = document.createEvent('HTMLEvents');
-                    event.initEvent('change', true, false);
-                    t.$sel.dispatchEvent(event);
-                }
-                if (body) {
-                    t.$ta.value = body;
-                    event = document.createEvent('HTMLEvents');
-                    event.initEvent('keyup', true, false);
-                    t.$ta.dispatchEvent(event);
-                }
+            function _setStatus(status) {
+                t.$sel.vale = status;
+                event = document.createEvent('HTMLEvents');
+                event.initEvent('change', true, false);
+                t.$sel.dispatchEvent(event);
+            }
+
+            function _setBody(body) {
+                t.$ta.value = body;
+                event = document.createEvent('HTMLEvents');
+                event.initEvent('keyup', true, false);
+                t.$ta.dispatchEvent(event);
             }
 
             // non 200, no request
-            _setFormValues(400);
+            _setStatus(400);
             expect(this.$btn.getAttribute('disabled')).toBeTruthy();
 
             // non 200, request
             $ajax(testRequest1);
             this.clock.tick(1500);
-            _setFormValues(500);
+            _setStatus(500);
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
 
             // 200, request, empty text
-            _setFormValues(200, '   ');
+            _setStatus(200);
+            _setBody('   ');
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
 
             // 200, request, invalid text
-            _setFormValues(200, '{ "id": 1');
+            _setStatus(200);
+            _setBody('{ "id": 1');
             expect(hasClass(this.$ta, 'error')).toBeTruthy();
             expect(this.$btn.getAttribute('disabled')).toBeTruthy();
 
             // 200, request, valid text
-            _setFormValues(200, '{ "id": 1 }');
+            _setStatus(200);
+            _setBody('{ "id": 1 }');
             expect(hasClass(this.$ta, 'error')).toBeFalsy();
             expect(this.$btn.getAttribute('disabled')).toBeFalsy();
+        });
+
+        it('should save, load, clear responses', function() {
+            var str1 = '{ "id": 1, "text": "string #1" }';
+            var str2 = '{ "id": 2, "text": "string #2" }';
+            this.sc.start();
+
+            var e = document.createEvent('HTMLEvents');
+            e.initEvent('click', true, false);
+            this.$btnClear.dispatchEvent(e);
+            expect(this.spanCounts.innerText).toBe('0/0');
+
+            // Test save button disable state
+            expect(this.$btnSave.getAttribute('disabled')).toBeTruthy();
+            this.$ta.value = str1;
+
+            e = document.createEvent('HTMLEvents');
+            e.initEvent('keyup', true, false);
+            this.$ta.dispatchEvent(e);
+
+            expect(this.$btnSave.getAttribute('disabled')).toBeFalsy();
+
+            // save some json
+            e = document.createEvent('HTMLEvents');
+            e.initEvent('click', true, false);
+            this.$btnSave.dispatchEvent(e);
+            expect(this.spanCounts.innerText).toBe('1/1');
+
+            // Bring it back
+            this.$ta.value = '';
+            e = document.createEvent('HTMLEvents');
+            e.initEvent('click', true, false);
+            this.$btnNext.dispatchEvent(e);
+            expect(this.$ta.value).toBe(str1);
+
+            // Save String 2
+            this.$ta.value = str2;
+            e = document.createEvent('HTMLEvents');
+            e.initEvent('click', true, false);
+            this.$btnSave.dispatchEvent(e);
+            expect(this.spanCounts.innerText).toBe('1/2');
+
+            // Next button
+            this.$ta.value = '';
+            this.$btnNext.click();
+            expect(this.$ta.value).toBe(str2);
+            expect(this.spanCounts.innerText).toBe('2/2');
+
+            // Next button
+            this.$ta.value = '';
+            this.$btnNext.click();
+            expect(this.$ta.value).toBe(str1);
+            expect(this.spanCounts.innerText).toBe('1/2');
+
+            // Prev button
+            this.$ta.value = '';
+            this.$btnPrev.click();
+            expect(this.$ta.value).toBe(str2);
+            expect(this.spanCounts.innerText).toBe('2/2');
+
+            // Prev button
+            this.$ta.value = '';
+            this.$btnPrev.click();
+            expect(this.$ta.value).toBe(str1);
+            expect(this.spanCounts.innerText).toBe('1/2');
+
+            // Clear button
+            this.$ta.value = '';
+            this.$btnClear.click();
+            expect(this.spanCounts.innerText).toBe('0/0');
         });
     });
 })();
