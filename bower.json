@@ -1,6 +1,10 @@
 {
   "name": "drunken-octo-sansa",
-  "private": true,
+  "version": "1.0.0",
+  "main": [
+      "app/scripts/views/sinonController.js",
+      "app/styles/sinonController.css"
+  ],
   "dependencies": {
     "bootstrap": "~2.3.2",
     "jasmine": "~1.3.1"
