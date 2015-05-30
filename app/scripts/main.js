@@ -6,7 +6,7 @@ var formEl = document.getElementById('formRequest');
 
 new SinonController({
     el: sinonEl
-}).render().start();
+}).create().start();
 
 addEventListener(formEl, 'submit', function (ev) {
     ev.preventDefault();

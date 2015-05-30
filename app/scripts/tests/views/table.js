@@ -38,7 +38,7 @@
 
 
         it('should render the fields as headers', function () {
-            var tbl = getTable(data1.config).render();
+            var tbl = getTable(data1.config).create();
             var thEl = tbl.el.querySelectorAll('th');
             expect(thEl.length).toBe(data1.config.fields.length);
             for (var i = 0; i < thEl.length; i++) {
@@ -48,18 +48,18 @@
 
 
         it('should render name in the caption', function () {
-            var tbl = getTable(data1.config).render();
+            var tbl = getTable(data1.config).create();
             var captionEl = tbl.el.querySelector('caption');
             expect(captionEl.innerText).toBe(data1.config.name);
 
-            tbl = getTable(data2.config).render();
+            tbl = getTable(data2.config).create();
             captionEl = tbl.el.querySelector('caption');
             expect(captionEl.innerText).toBe('');
         });
 
 
         it('should push a row to the bottom of the table', function () {
-            var tbl = getTable(data1.config).render();
+            var tbl = getTable(data1.config).create();
 
             var trEls = tbl.el.querySelectorAll('tbody tr');
             expect(trEls.length).toBe(0);
@@ -86,7 +86,7 @@
 
 
         it('shoud pop a row from the top of the table', function () {
-            var tbl = getTable(data1.config).render();
+            var tbl = getTable(data1.config).create();
             var callback = sinon.spy();
             tbl.popRow(callback);
             expect(callback.calledWith(null)).toBeTruthy();
@@ -101,7 +101,7 @@
 
 
         it('should detect if it has rows', function () {
-            var tbl = getTable(data1.config).render();
+            var tbl = getTable(data1.config).create();
             expect(tbl.hasRows()).toBeFalsy();
             tbl.pushRow(row1);
             expect(tbl.hasRows()).toBeTruthy();

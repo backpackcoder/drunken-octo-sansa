@@ -94,7 +94,7 @@ function Table(config) {
      * Render the table
      * @returns {Table}
      */
-    t.render = function () {
+    t.create = function () {
         var html = '<table><caption>' + (_name || '') + '</caption>' +
             '<thead>' + _makeRow(_fields, true) + '</thead>' +
             '<tbody></tbody></table>';

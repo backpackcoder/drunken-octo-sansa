@@ -11,7 +11,7 @@ var formEl = document.querySelector('.ui-codeedit > form');
 
 new SinonController({
     el: sinonEl
-}).render().start();
+}).create().start();
 
 addEventListener(htmlEl, 'keyup', function (ev) {
     ev.preventDefault();
